@@ -20,3 +20,8 @@
   --secondary-color: #000;
   --dark-light-color: #fff;
 }
+
+#root {
+  width: 100%;
+  height: 100vh;
+}

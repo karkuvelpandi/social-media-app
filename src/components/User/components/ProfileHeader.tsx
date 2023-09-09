@@ -52,9 +52,9 @@ export const ProfileHeader = () => {
           <p className="text-sm font-semibold text-white cursor-default">
             <i className="pi pi-map-marker" />
             &nbsp;{" "}
-            {currentSelectedUser.location.city
+            {/* {currentSelectedUser.location.city
               ? currentSelectedUser.location.city
-              : ""}
+              : ""} */}
           </p>
           <div className="flex gap-1.5 mt-1.5">
             <i className="pi pi-twitter cursor-pointer text-[#109cd8]" />

@@ -17,3 +17,9 @@ declare module "*.svg" {
   const value: string;
   export default value;
 }
+
+// Declare module for importing jpg image files
+declare module "*.jpg" {
+  const value: string;
+  export default value;
+}

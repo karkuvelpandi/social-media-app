@@ -1,19 +1,20 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
 import { classNames } from "primereact/utils";
 import { InputText } from "primereact/inputtext";
 import dudeBlack from "../../../ui/images/dude-black.png";
-import dudeWhite from "../../../ui/images/dude-black.png";
+// import dudeWhite from "../../../ui/images/dude-black.png";
 import { LoginFormData } from "../../../types/auth.types";
 import { isValidEmail } from "../../../utils/general.util";
 import { login, logout } from "../auth.slice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../redux";
+import { AsyncState } from "../../../types";
 
 export const Login = () => {
   const dispatch = useDispatch();
-  const toast = useRef(null);
+
   const [validationActive, setValidationActive] = useState<boolean>(false);
   const [formData, setFormData] = useState<LoginFormData>({
     email: "",
@@ -23,6 +24,9 @@ export const Login = () => {
     email: "",
     password: "",
   });
+  // Access the store data
+  const loginStatus = useSelector((state: RootState) => state.auth.loginStatus);
+  //
   const validateForm = () => {
     let isValid = true;
     const newErrorMessages = {
@@ -61,17 +65,19 @@ export const Login = () => {
       console.log("Invalid data");
     }
   };
+
   return (
     <section className="max-w-[350px] w-full h-auto space-y-2">
       <div className="border-[1px] p-5 rounded-lg">
         <div className="w-full flex justify-center mb-2">
           <Link to="/">
-            <img src={dudeBlack} width="120px" height="120px" alt="" />
+            <p className="logo-font text-myTextColor font-bold text-7xl my-1">
+              Dude
+            </p>
           </Link>
         </div>
         <div className=" space-y-5">
           <span className="p-float-label p-input-icon-right w-full">
-            <Toast ref={toast} />
             {validationActive && (
               <i
                 className={
@@ -137,6 +143,7 @@ export const Login = () => {
             <label htmlFor="input_value">Password</label>
           </span>
           <Button
+            loading={loginStatus === AsyncState.PENDING}
             disabled={(formData.email && formData.password) === ""}
             onClick={submitHandler}
             label="Submit"
@@ -153,7 +160,6 @@ export const Login = () => {
             sign up
           </Link>
         </span>
-        <button onClick={() => dispatch(logout())}>Log out</button>
       </div>
     </section>
   );

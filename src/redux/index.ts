@@ -5,6 +5,7 @@ import appSlice from "./app.slice";
 import visibilitySlice from "./visibility.slice";
 import authSlice from "../components/auth/auth.slice";
 import userSlice from "../components/User/user.slice";
+import postSlice from "../components/Post/post.slice";
 //
 const sagaMiddleware = createSagaMiddleware();
 //
@@ -16,6 +17,7 @@ export const store = configureStore({
     visibility: visibilitySlice,
     auth: authSlice,
     user: userSlice,
+    post: postSlice,
   },
   middleware,
 });

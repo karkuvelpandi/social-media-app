@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCM1PSwkeNb5HiqhIeXvrF3wtkijFHOHTE",
@@ -18,21 +19,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 // Init services
 const db = getFirestore(app);
-// collection reference
-const collRef = collection(db, "posts");
+// Firebase storage reference
+const storage = getStorage(app);
 
-// Get collection data
-getDocs(collRef)
-  .then((snapshot) => {
-    let posts: any = [];
-    snapshot.docs.forEach((doc) => {
-      console.log(doc);
-      posts.push({ ...doc.data(), id: doc.id });
-    });
-    console.log(posts);
-  })
-  .catch((error) => {
-    console.log(error);
-  });
-
-export { app, auth, db };
+export { app, auth, db, storage };

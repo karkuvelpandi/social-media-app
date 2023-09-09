@@ -86,4 +86,4 @@ function* logOutSaga() {
   );
 }
 
-export const authSaga = [signUpAndCreateUserSaga(), loginSaga(), logOutSaga()];
+export const authSagas = [signUpAndCreateUserSaga(), loginSaga(), logOutSaga()];

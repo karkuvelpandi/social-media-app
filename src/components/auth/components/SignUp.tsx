@@ -1,17 +1,18 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
 import { classNames } from "primereact/utils";
 import { InputText } from "primereact/inputtext";
 import { useDispatch, useSelector } from "react-redux";
 import dudeBlack from "../../../ui/images/dude-black.png";
-import dudeWhite from "../../../ui/images/dude-black.png";
+// import dudeWhite from "../../../ui/images/dude-black.png";
 import { isValidEmail } from "../../../utils/general.util";
 import { RegisterFormData } from "../../../types/auth.types";
 import { signUp } from "../auth.slice";
+import { RootState } from "../../../redux";
+import { AsyncState } from "../../../types";
+
 export const SignUp = () => {
-  const toast = useRef(null);
   const dispatch = useDispatch();
   const [validationActive, setValidationActive] = useState<boolean>(false);
   const [formData, setFormData] = useState<RegisterFormData>({
@@ -26,6 +27,11 @@ export const SignUp = () => {
     username: "",
     password: "",
   });
+  // Access the store
+  const signUpStatus = useSelector(
+    (state: RootState) => state.auth.signUpStatus
+  );
+  //
   const validateForm = () => {
     let isValid = true;
     const newErrorMessages = {
@@ -92,11 +98,12 @@ export const SignUp = () => {
       <div className="border-[1px] p-5 rounded-lg">
         <div className="w-full flex justify-center mb-2">
           <Link to="/">
-            <img src={dudeBlack} width="120px" height="120px" alt="" />
+            <p className="logo-font text-myTextColor font-bold text-7xl my-1">
+              Dude
+            </p>
           </Link>
         </div>
         <div className=" space-y-5">
-          <Toast ref={toast} />
           <span className="p-float-label p-input-icon-right w-full">
             {validationActive && (
               <i
@@ -229,6 +236,7 @@ export const SignUp = () => {
           <Button
             onClick={submitHandler}
             label="Submit"
+            loading={signUpStatus === AsyncState.PENDING}
             disabled={
               (formData.email &&
                 formData.username &&

@@ -6,6 +6,7 @@ import {
 } from "firebase/auth";
 import { LoginFormData, RegisterFormData } from "../types/auth.types";
 import { setDoc, doc } from "firebase/firestore";
+import { newUser } from "../utils/user.util";
 
 export const signUpAndCreateUserData = async (formData: RegisterFormData) => {
   const userObject: any = await createUserWithEmailAndPassword(
@@ -20,7 +21,8 @@ export const signUpAndCreateUserData = async (formData: RegisterFormData) => {
       throw new Error(error.message);
     });
   if (userObject.accessToken && userObject.uid) {
-    await setDoc(doc(db, "users", userObject.uid), { ...formData });
+    let user = newUser(userObject.uid, formData);
+    await setDoc(doc(db, "users", userObject.uid), user);
     localStorage.setItem("authToken", userObject.accessToken);
     localStorage.setItem("partyId", userObject.uid);
   }

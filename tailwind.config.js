@@ -4,10 +4,19 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "var(--primary-bg-color)",
-        secondary: "var(--secondary-color)",
-        textColor: "var(--dark-light-color)",
+        myPrimary: "var(--primary-bg-color)",
+        mySecondary: "var(--secondary-color)",
+        myTextColor: "var(--dark-light-color)",
       },
+    },
+    screens: {
+      xxs: "320px",
+      xs: "480px",
+      sm: "576px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1536px",
     },
   },
   plugins: [],

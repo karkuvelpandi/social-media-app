@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 export const ProfileTabs = () => {
   const navLinkStyles = ({ isActive }: any) => {
@@ -8,14 +8,10 @@ export const ProfileTabs = () => {
   };
   const isProfileRoute = window.location.pathname === "/profile";
   return (
-    <section className="mt-1 m-auto bg-myPrimary rounded-md shadow-gray-500 shadow-md flex">
-      <NavLink
-        style={isProfileRoute ? navLinkStyles : {}}
-        to="/profile"
-        className="cursor-pointer p-2 "
-      >
+    <section className="mt-1 m-auto bg-myPrimary rounded-md shadow-myShadowColor shadow-md flex">
+      <Link to="/profile/*" className="cursor-pointer p-2 ">
         Timeline &nbsp; <i className="pi pi-history" />
-      </NavLink>
+      </Link>
       {/* <NavLink
         style={navLinkStyles}
         to="/profile/about"

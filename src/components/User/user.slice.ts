@@ -1,7 +1,12 @@
 import { PayloadAction, createSlice, createAction } from "@reduxjs/toolkit";
 import { Actions } from "./user.saga";
 import { ActionState, AsyncState } from "../../types";
-import { AddUserPostData, UserProfileInterface } from "../../types/user.types";
+import {
+  AddUserPostData,
+  FollowData,
+  UserProfileInterface,
+} from "../../types/user.types";
+import { AuthorInfo } from "../../types/post.types";
 
 // Actions
 export const getUserProfile = createAction<string>(
@@ -19,12 +24,16 @@ export const updateUserProfile = createAction<UserProfileInterface>(
 export const addUserPost = createAction<AddUserPostData>(
   Actions.addUserPost + ActionState.REQUEST
 );
+export const followUser = createAction<FollowData>(
+  Actions.followUser + ActionState.REQUEST
+);
 
 // State interface
 interface UserInitialState {
   userProfile: UserProfileInterface;
   currentSelectedUser: UserProfileInterface;
-  availableUsers: UserProfileInterface[];
+  availableUsers: AuthorInfo[];
+  suggestedUsers: AuthorInfo[];
   getUserProfileStatus: string;
   getUserProfileError: string;
   isProfileEditModalActive: boolean;
@@ -36,6 +45,8 @@ interface UserInitialState {
   getAllUsersError: string;
   getSelectedUserStatus: string;
   getSelectedUserError: string;
+  followUserStatus: string;
+  followUserError: string;
 }
 
 // State
@@ -50,9 +61,14 @@ const initialState: UserInitialState = {
     userImageUrl: "",
     coverImageUrl: "",
     socialMediaLinks: [],
-    location: undefined,
+    location: {
+      city: "",
+      long: 0,
+      lati: 0,
+    },
     chats: [],
     settings: undefined,
+    following: [],
   },
   currentSelectedUser: {
     id: "",
@@ -64,11 +80,17 @@ const initialState: UserInitialState = {
     userImageUrl: "",
     coverImageUrl: "",
     socialMediaLinks: [],
-    location: undefined,
+    location: {
+      city: "",
+      long: 0,
+      lati: 0,
+    },
     chats: [],
     settings: undefined,
+    following: [],
   },
   availableUsers: [],
+  suggestedUsers: [],
   getUserProfileStatus: AsyncState.IDLE,
   getUserProfileError: "",
   isProfileEditModalActive: false,
@@ -80,6 +102,8 @@ const initialState: UserInitialState = {
   getAllUsersError: "",
   getSelectedUserStatus: AsyncState.IDLE,
   getSelectedUserError: "",
+  followUserStatus: AsyncState.IDLE,
+  followUserError: "",
 };
 
 export const userSlice = createSlice({
@@ -88,6 +112,11 @@ export const userSlice = createSlice({
   reducers: {
     toggleProfileEditModal: (state, action: PayloadAction<boolean>) => {
       state.isProfileEditModalActive = action.payload;
+    },
+    filterFollowedUser: (state, action: PayloadAction<string>) => {
+      state.suggestedUsers = state.suggestedUsers.filter(
+        (user) => user.userId !== action.payload
+      );
     },
   },
   extraReducers(builder) {
@@ -98,8 +127,9 @@ export const userSlice = createSlice({
     });
     builder.addCase(
       Actions.getUserProfile + ActionState.FULFILLED,
-      (state, action: PayloadAction<any>) => {
+      (state, action: PayloadAction<UserProfileInterface>) => {
         state.userProfile = action.payload;
+        console.log(action.payload);
         state.getUserProfileStatus = AsyncState.FULFILLED;
         state.getUserProfileError = "";
       }
@@ -138,8 +168,20 @@ export const userSlice = createSlice({
     });
     builder.addCase(
       Actions.getAllUsers + ActionState.FULFILLED,
-      (state, action: PayloadAction<UserProfileInterface[]>) => {
+      (state, action: PayloadAction<AuthorInfo[]>) => {
         state.availableUsers = action.payload;
+        const filteredUsers = action.payload.filter((user) => {
+          const isNotMe = user.userId !== state.userProfile.id;
+          const isUserAlreadyFollowed = state.userProfile.following
+            ? state.userProfile.following.some(
+                (author: AuthorInfo) => author.userId === user.userId
+              )
+            : false;
+          return isNotMe === !isUserAlreadyFollowed;
+        });
+        if (filteredUsers.length > 0) {
+          state.suggestedUsers = filteredUsers;
+        }
         state.getAllUsersStatus = AsyncState.FULFILLED;
         state.getAllUsersError = "";
       }
@@ -162,7 +204,7 @@ export const userSlice = createSlice({
     builder.addCase(
       Actions.updateUserProfile + ActionState.FULFILLED,
       (state, action: PayloadAction<any>) => {
-        console.log(action.payload);
+        state.currentSelectedUser = action.payload;
         state.userProfile = action.payload;
         state.updateUserProfileStatus = AsyncState.FULFILLED;
         state.updateUserProfileError = "";
@@ -183,7 +225,6 @@ export const userSlice = createSlice({
     builder.addCase(
       Actions.addUserPost + ActionState.FULFILLED,
       (state, action: PayloadAction<any>) => {
-        console.log(action.payload);
         state.userProfile.posts = [action.payload, ...state.userProfile.posts];
         console.log(state.userProfile);
         state.addUserPostStatus = AsyncState.FULFILLED;
@@ -197,9 +238,36 @@ export const userSlice = createSlice({
         state.addUserPostError = action.payload;
       }
     );
+    // Follow Another users
+    builder.addCase(Actions.followUser + ActionState.PENDING, (state) => {
+      state.followUserStatus = AsyncState.PENDING;
+      state.followUserError = "";
+    });
+    builder.addCase(
+      Actions.followUser + ActionState.FULFILLED,
+      (state, action: PayloadAction<FollowData>) => {
+        const { profileToFollow } = action.payload;
+        state.userProfile.following = [
+          profileToFollow,
+          ...state.userProfile.following,
+        ];
+        state.suggestedUsers = state.suggestedUsers.filter(
+          (user) => user.userId !== profileToFollow.userId
+        );
+        state.followUserStatus = AsyncState.FULFILLED;
+        state.followUserError = "";
+      }
+    );
+    builder.addCase(
+      Actions.followUser + ActionState.REJECTED,
+      (state, action: PayloadAction<string>) => {
+        state.followUserStatus = AsyncState.REJECTED;
+        state.followUserError = action.payload;
+      }
+    );
   },
 });
 
 // exports
-export const { toggleProfileEditModal } = userSlice.actions;
+export const { toggleProfileEditModal, filterFollowedUser } = userSlice.actions;
 export default userSlice.reducer;

@@ -8,10 +8,10 @@ export const SideBar = () => {
   return (
     <>
       <div className="hidden sm:w-52 h-full fixed -z-0 sm:block bg-mySecondary text-myTextColor top-[56px]">
-        <div className="w-[90%] bg-myPrimary m-auto mt-3 p-3 space-y-2.5 rounded-md shadow-gray-500 shadow-md">
+        <div className="w-[90%] bg-myPrimary m-auto mt-3 p-3 space-y-2.5 rounded-md shadow-myShadowColor shadow-md">
           <p className="text-gray-500 font-semibold">Explore</p>
           <Link
-            to={`/profile/${userProfile.id}`}
+            to="/"
             className="flex justify-start gap-2.5 items-center hover:scale-[1.03]"
           >
             <div className="h-9 min-w-[36px] rounded-full bg-gradient-to-tr from-blue-700 to-blue-500 flex justify-center items-center">
@@ -20,7 +20,7 @@ export const SideBar = () => {
             <span className="font-semibold">New Feeds</span>
           </Link>
           <Link
-            to="/"
+            to={`/profile/${userProfile.id}`}
             className="flex justify-start gap-2.5 items-center hover:scale-[1.03]"
           >
             <div className="h-9 min-w-[36px] rounded-full bg-gradient-to-br from-green-600 to-green-300 flex justify-center items-center">
@@ -47,7 +47,7 @@ export const SideBar = () => {
             <span className="font-semibold">Notifications</span>
           </Link>
         </div>
-        <div className="w-[90%] bg-myPrimary m-auto mt-3 p-3 space-y-2.5 rounded-md shadow-gray-500 shadow-md">
+        <div className="w-[90%] bg-myPrimary m-auto mt-3 p-3 space-y-2.5 rounded-md shadow-myShadowColor shadow-md">
           <p className="text-gray-500 font-semibold">More Pages</p>
           <Link
             to="/"

@@ -1,7 +1,7 @@
 export interface CreatePostData {
   description: string;
   postImages: string[];
-  postVideos: string[];
+  postVideos: VideoInfo[];
   authorInfo: AuthorInfo;
 }
 
@@ -14,7 +14,7 @@ export interface AuthorInfo {
 export interface NewPostInterface {
   description: string;
   postImages: string[];
-  postVideos: string[];
+  postVideos: VideoInfo[];
   authorInfo: AuthorInfo;
   likes: string[];
   comments: [];
@@ -26,10 +26,15 @@ export interface PostInterface {
   id: string;
   description: string;
   postImages: string[];
-  postVideos: string[];
+  postVideos: VideoInfo[];
   authorInfo: AuthorInfo;
   likes: string[];
   comments: [];
   shares: 0;
   createdAt?: number;
+}
+
+export interface VideoInfo {
+  src: string;
+  viewCount: number;
 }

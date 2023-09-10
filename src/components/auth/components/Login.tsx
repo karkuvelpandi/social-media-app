@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 import { Button } from "primereact/button";
 import { classNames } from "primereact/utils";
 import { InputText } from "primereact/inputtext";
-import dudeBlack from "../../../ui/images/dude-black.png";
+// import dudeBlack from "../../../ui/images/dude-black.png";
 // import dudeWhite from "../../../ui/images/dude-black.png";
 import { LoginFormData } from "../../../types/auth.types";
 import { isValidEmail } from "../../../utils/general.util";
-import { login, logout } from "../auth.slice";
+import { login } from "../auth.slice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../redux";
 import { AsyncState } from "../../../types";
@@ -26,6 +26,10 @@ export const Login = () => {
   });
   // Access the store data
   const loginStatus = useSelector((state: RootState) => state.auth.loginStatus);
+  const isMobileView = useSelector(
+    (state: RootState) => state.visibility.isMobileView
+  );
+
   //
   const validateForm = () => {
     let isValid = true;
@@ -89,14 +93,16 @@ export const Login = () => {
             )}
             <InputText
               tooltip={errorMessage.email}
-              onBlur={(e) =>
+              tooltipOptions={{ position: isMobileView ? "bottom" : "right" }}
+              onBlur={(e) => {
                 isValidEmail(e.target.value)
                   ? setErrorMessage({ ...errorMessage, email: "" })
                   : setErrorMessage({
                       ...errorMessage,
                       email: "Please enter valid email.",
-                    })
-              }
+                    });
+                validationActive && validateForm();
+              }}
               value={formData.email}
               onChange={(e) => {
                 setFormData({ ...formData, email: e.target.value });
@@ -121,19 +127,21 @@ export const Login = () => {
             )}
             <InputText
               tooltip={errorMessage.password}
+              tooltipOptions={{ position: isMobileView ? "bottom" : "right" }}
               type="password"
               value={formData.password}
               onChange={(e) => {
                 setFormData({ ...formData, password: e.target.value });
               }}
-              onBlur={(e) =>
+              onBlur={(e) => {
                 e.target.value
                   ? setErrorMessage({ ...errorMessage, password: "" })
                   : setErrorMessage({
                       ...errorMessage,
                       password: "Please enter password.",
-                    })
-              }
+                    });
+                validationActive && validateForm();
+              }}
               className={
                 classNames({
                   "p-invalid": errorMessage.password !== "",

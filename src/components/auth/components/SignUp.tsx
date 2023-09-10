@@ -4,7 +4,7 @@ import { Button } from "primereact/button";
 import { classNames } from "primereact/utils";
 import { InputText } from "primereact/inputtext";
 import { useDispatch, useSelector } from "react-redux";
-import dudeBlack from "../../../ui/images/dude-black.png";
+// import dudeBlack from "../../../ui/images/dude-black.png";
 // import dudeWhite from "../../../ui/images/dude-black.png";
 import { isValidEmail } from "../../../utils/general.util";
 import { RegisterFormData } from "../../../types/auth.types";
@@ -30,6 +30,9 @@ export const SignUp = () => {
   // Access the store
   const signUpStatus = useSelector(
     (state: RootState) => state.auth.signUpStatus
+  );
+  const isMobileView = useSelector(
+    (state: RootState) => state.visibility.isMobileView
   );
   //
   const validateForm = () => {
@@ -116,15 +119,17 @@ export const SignUp = () => {
             )}
             <InputText
               tooltip={errorMessage.email}
+              tooltipOptions={{ position: isMobileView ? "bottom" : "right" }}
               value={formData.email}
-              onBlur={(e) =>
+              onBlur={(e) => {
                 isValidEmail(e.target.value)
                   ? setErrorMessage({ ...errorMessage, email: "" })
                   : setErrorMessage({
                       ...errorMessage,
                       email: "Please enter valid email.",
-                    })
-              }
+                    });
+                validationActive && validateForm();
+              }}
               onChange={(e) => {
                 setFormData({ ...formData, email: e.target.value });
               }}
@@ -148,18 +153,20 @@ export const SignUp = () => {
             )}
             <InputText
               tooltip={errorMessage.fullName}
+              tooltipOptions={{ position: isMobileView ? "bottom" : "right" }}
               value={formData.fullName}
               onChange={(e) => {
                 setFormData({ ...formData, fullName: e.target.value });
               }}
-              onBlur={(e) =>
+              onBlur={(e) => {
                 e.target.value
                   ? setErrorMessage({ ...errorMessage, fullName: "" })
                   : setErrorMessage({
                       ...errorMessage,
                       fullName: "Please enter name.",
-                    })
-              }
+                    });
+                validationActive && validateForm();
+              }}
               className={
                 classNames({
                   "p-invalid": errorMessage.fullName !== "",
@@ -180,18 +187,20 @@ export const SignUp = () => {
             )}
             <InputText
               tooltip={errorMessage.username}
+              tooltipOptions={{ position: isMobileView ? "bottom" : "right" }}
               value={formData.username}
               onChange={(e) => {
                 setFormData({ ...formData, username: e.target.value });
               }}
-              onBlur={(e) =>
+              onBlur={(e) => {
                 e.target.value
                   ? setErrorMessage({ ...errorMessage, username: "" })
                   : setErrorMessage({
                       ...errorMessage,
                       username: "Please enter username.",
-                    })
-              }
+                    });
+                validationActive && validateForm();
+              }}
               className={
                 classNames({
                   "p-invalid": errorMessage.username !== "",
@@ -212,19 +221,21 @@ export const SignUp = () => {
             )}
             <InputText
               tooltip={errorMessage.password}
+              tooltipOptions={{ position: isMobileView ? "bottom" : "right" }}
               type="password"
               value={formData.password}
               onChange={(e) => {
                 setFormData({ ...formData, password: e.target.value });
               }}
-              onBlur={(e) =>
+              onBlur={(e) => {
                 e.target.value
                   ? setErrorMessage({ ...errorMessage, password: "" })
                   : setErrorMessage({
                       ...errorMessage,
                       password: "Please enter password.",
-                    })
-              }
+                    });
+                validationActive && validateForm();
+              }}
               className={
                 classNames({
                   "p-invalid": errorMessage.password !== "",

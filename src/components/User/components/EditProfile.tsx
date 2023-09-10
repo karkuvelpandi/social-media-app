@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Modal } from "../../../ui/Modal/Modal";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleProfileEditModal, updateUserProfile } from "../user.slice";
-import { HealthyImage } from "../../../ui/HealthyImage/HealthyImage";
 import { RootState } from "../../../redux";
 import defaultProfile from "../../../ui/images/defaultImages/defaultProfile.jpg";
 import defaultCover from "../../../ui/images/defaultImages/defaultCover.jpg";
@@ -13,6 +12,7 @@ import { classNames } from "primereact/utils";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { FileUploader } from "../../../ui/FileUploader/FileUploader";
+import { AsyncState } from "../../../types";
 
 export const EditProfile = () => {
   const dispatch = useDispatch();
@@ -33,7 +33,18 @@ export const EditProfile = () => {
   });
   //   Access the store
   const userProfile = useSelector((state: RootState) => state.user.userProfile);
+  const updateUserProfileStatus = useSelector(
+    (state: RootState) => state.user.updateUserProfileStatus
+  );
   //
+  const isLoading = updateUserProfileStatus === AsyncState.PENDING;
+  // Close edit modal after update is complete
+  useEffect(() => {
+    if (updateUserProfileStatus === AsyncState.FULFILLED) {
+      dispatch(toggleProfileEditModal(false));
+    }
+  }, [dispatch, updateUserProfileStatus]);
+  // Fill Existing data
   useEffect(() => {
     setFormData({
       fullName: userProfile.fullName,
@@ -95,13 +106,14 @@ export const EditProfile = () => {
     }
     // Validate location
     if (formData.location.city.trim() === "") {
-      newErrorMessages.location = "Name is required";
+      newErrorMessages.location = "City is required";
       isValid = false;
     }
 
     setErrorMessage(newErrorMessages);
     return isValid;
   };
+  // Submit function
   const submitHandler = (e: any) => {
     e.preventDefault();
     setIsFileUploaded(false);
@@ -137,7 +149,7 @@ export const EditProfile = () => {
           >
             <div className="absolute bg-black inset-0 -z-0 opacity-40 rounded-md" />
             <img
-              className=" absolute top-6 sm:top-8 left-2 rounded-full h-20 sm:h-28"
+              className=" absolute top-6 sm:top-8 left-2 rounded-full h-20 sm:h-28 w-20 sm:w-28"
               src={formData.userImageUrl || defaultProfile}
               alt="profile"
             />
@@ -198,7 +210,7 @@ export const EditProfile = () => {
                     ? setErrorMessage({ ...errorMessage, location: "" })
                     : setErrorMessage({
                         ...errorMessage,
-                        location: "Please enter name.",
+                        location: "Please enter city.",
                       })
                 }
                 className={
@@ -212,6 +224,7 @@ export const EditProfile = () => {
           </div>
           <div className="flex justify-end">
             <Button
+              loading={isLoading}
               onClick={submitHandler}
               label="Submit"
               className="w-40 bg-blue-500 rounded-xl"

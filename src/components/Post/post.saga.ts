@@ -9,8 +9,9 @@ export const Actions = {
   createPost: "post/create-post ",
   getUserPosts: "post/get-user-posts ",
   getFeedPosts: "post/get-feed-posts ",
-  likePost: "post/like-post",
-  unlikePost: "post/unlike-post",
+  likePost: "post/like-post ",
+  unlikePost: "post/unlike-post ",
+  addVideoView: "post/add-video-view ",
 };
 // Saga function for create new post
 function* createPostSaga() {
@@ -123,10 +124,32 @@ function* unlikePostSaga() {
   );
 }
 
+function* addVideoViewSaga() {
+  yield takeEvery(
+    Actions.addVideoView + ActionState.REQUEST,
+    function* (action: PayloadAction<string>): any {
+      try {
+        const data = yield call(() => firebaseApi.addVideoView(action.payload));
+        if (!data) throw new Error();
+        yield put({
+          type: Actions.addVideoView + ActionState.FULFILLED,
+          payload: data,
+        });
+      } catch (error: any) {
+        yield put({
+          type: Actions.addVideoView + ActionState.REJECTED,
+          payload: error?.message || "Something wrong happened",
+        });
+      }
+    }
+  );
+}
+
 export const postSagas = [
   createPostSaga(),
   getUserPostsSaga(),
   getFeedPostsSaga(),
   likePostSaga(),
   unlikePostSaga(),
+  addVideoViewSaga(),
 ];

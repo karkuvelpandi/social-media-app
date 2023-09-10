@@ -2,7 +2,11 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import { put, call, takeEvery } from "redux-saga/effects";
 import { ActionState } from "../../types";
 import * as firebaseAPI from "../../api/user.service";
-import { AddUserPostData, UserProfileInterface } from "../../types/user.types";
+import {
+  AddUserPostData,
+  FollowData,
+  UserProfileInterface,
+} from "../../types/user.types";
 //Action types
 export const Actions = {
   getUserProfile: "user/get-user-profile ",
@@ -10,6 +14,7 @@ export const Actions = {
   getSelectedUser: "user/get-selected-user ",
   updateUserProfile: "user/update-user-profile ",
   addUserPost: "user/add-user-post ",
+  followUser: "user/follow-user ",
 };
 
 // Get User profile
@@ -132,10 +137,35 @@ function* addUserPostSaga() {
   );
 }
 
+// Follow another person's profile
+function* followUserSaga() {
+  yield takeEvery(
+    Actions.followUser + ActionState.REQUEST,
+    function* (action: PayloadAction<FollowData>): any {
+      try {
+        yield put({ type: Actions.followUser + ActionState.PENDING });
+        const data = yield call(() => firebaseAPI.followUser(action.payload));
+        if (!data) throw new Error();
+        console.log(action.payload);
+        yield put({
+          type: Actions.followUser + ActionState.FULFILLED,
+          payload: action.payload,
+        });
+      } catch (error: any) {
+        yield put({
+          type: Actions.followUser + ActionState.REJECTED,
+          payload: error?.message || "Something wrong happened",
+        });
+      }
+    }
+  );
+}
+
 export const userSagas = [
   getUserProfileSaga(),
   getAllUsersSaga(),
   updateUserProfileSaga(),
   addUserPostSaga(),
   getSelectedUserSaga(),
+  followUserSaga(),
 ];

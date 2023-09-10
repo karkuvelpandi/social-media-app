@@ -28,6 +28,7 @@ const App = () => {
   const signUpStatus = useSelector(
     (state: RootState) => state.auth.signUpStatus
   );
+  const loginStatus = useSelector((state: RootState) => state.auth.loginStatus);
   const darkMode = useSelector((state: RootState) => state.visibility.darkMode);
 
   // Updating Network availability while loading the app
@@ -63,14 +64,17 @@ const App = () => {
       dispatch(getFeedPosts());
       dispatch(getAllUsers());
     }
-    if (userId && signUpStatus === AsyncState.FULFILLED) {
+    if (
+      (userId && signUpStatus === AsyncState.FULFILLED) ||
+      (userId && loginStatus === AsyncState.FULFILLED)
+    ) {
       dispatch(getUserProfile(userId));
     }
-  }, [signUpStatus]);
+  }, [signUpStatus, loginStatus]);
 
   // Updating device channel using screen size
   useEffect(() => {
-    if (windowWidth <= 640) {
+    if (windowWidth <= 575) {
       if (!isMobileView) dispatch(switchMobileView(true));
     } else {
       if (isMobileView) dispatch(switchMobileView(false));

@@ -3,6 +3,7 @@ import {
   query,
   where,
   addDoc,
+  getDoc,
   getDocs,
   updateDoc,
   collection,
@@ -49,7 +50,6 @@ export const getUserPosts = async (userId: string) => {
         console.log(doc);
         posts.push({ ...doc.data(), id: doc.id });
       });
-      console.log(posts);
       return posts;
     })
     .catch((error) => {
@@ -70,7 +70,6 @@ export const getFeedPosts = async () => {
       snapshot.docs.forEach((doc) => {
         posts.push({ ...doc.data(), id: doc.id });
       });
-      console.log(posts);
       return posts;
     })
     .catch((error) => {
@@ -108,6 +107,42 @@ export const unlikePost = async (data: AddUserPostData) => {
     return data; // Indicate success
   } catch (error) {
     console.error("Error updating Like:", error);
+    return false; // Indicate failure
+  }
+};
+
+// Add video View
+export const addVideoView = async (postId: string) => {
+  // Document reference
+  const docRef = doc(db, "posts", postId);
+
+  try {
+    // Retrieve the document
+    const docSnapshot = await getDoc(docRef);
+
+    if (docSnapshot.exists()) {
+      const postData = docSnapshot.data();
+
+      // Check if the postVideo array exists and is not empty
+      if (postData?.postVideo && postData.postVideo.length > 0) {
+        // Increment the viewCount of the first video
+        postData.postVideo[0].viewCount++;
+
+        // Update the document with the modified data
+        await updateDoc(docRef, { postVideo: postData.postVideo });
+
+        console.log("Add view successfully updated");
+        return postId; // Indicate success
+      } else {
+        console.error("postVideo array is empty or not found.");
+        return false; // Indicate failure
+      }
+    } else {
+      console.error("Document does not exist.");
+      return false; // Indicate failure
+    }
+  } catch (error) {
+    console.error("Error updating viewCount:", error);
     return false; // Indicate failure
   }
 };

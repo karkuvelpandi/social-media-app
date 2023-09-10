@@ -20,6 +20,9 @@ export const likePost = createAction<AddUserPostData>(
 export const unlikePost = createAction<AddUserPostData>(
   Actions.unlikePost + ActionState.REQUEST
 );
+export const addVideoView = createAction<string>(
+  Actions.addVideoView + ActionState.REQUEST
+);
 
 // State interface
 interface PostInitialState {
@@ -36,6 +39,7 @@ interface PostInitialState {
   likePostError: string;
   unlikePostStatus: string;
   unlikePostError: string;
+  addVideoViewError: string;
 }
 // State
 const initialState: PostInitialState = {
@@ -65,6 +69,7 @@ const initialState: PostInitialState = {
   likePostError: "",
   unlikePostStatus: AsyncState.IDLE,
   unlikePostError: "",
+  addVideoViewError: "",
 };
 
 // Slice of the store for post
@@ -211,6 +216,33 @@ const postSlice = createSlice({
       (state, action: PayloadAction<any>) => {
         state.unlikePostStatus = AsyncState.REJECTED;
         state.unlikePostError = action.payload;
+      }
+    );
+    // Add video view
+    builder.addCase(
+      Actions.addVideoView + ActionState.FULFILLED,
+      (state, action: PayloadAction<any>) => {
+        state.addVideoViewError = "";
+        if (action.payload) {
+          state.userPosts = state.userPosts.map((post) => {
+            if (post.id === action.payload) {
+              post.postVideos[0].viewCount = post.postVideos[0].viewCount++;
+              return post;
+            } else return post;
+          });
+          state.userFeedPosts = state.userFeedPosts.map((post) => {
+            if (post.id === action.payload) {
+              post.postVideos[0].viewCount = post.postVideos[0].viewCount++;
+              return post;
+            } else return post;
+          });
+        }
+      }
+    );
+    builder.addCase(
+      Actions.addVideoView + ActionState.REJECTED,
+      (state, action: PayloadAction<any>) => {
+        state.addVideoViewError = action.payload;
       }
     );
   },

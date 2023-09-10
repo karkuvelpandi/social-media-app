@@ -26,8 +26,8 @@ export const ProfileIcon = () => {
           <i className="pi pi-user text-myTextColor" />
         )}
         {isDropdownActive && (
-          <div className="absolute pageInEffectDown right-1 top-11 bg-mySecondary text-myTextColor h-fit w-24 shadow-sm shadow-myTextColor rounded-md">
-            <div className=" absolute h-4 z-[-1] top-[-4px] right-1 rotate-45 w-2 bg-mySecondary" />
+          <div className="absolute pageInEffectDown right-1 top-11 bg-myBgSecondary text-myTextColor h-fit w-24 shadow-sm shadow-myTextColor rounded-md">
+            <div className=" absolute h-4 z-[-1] top-[-4px] right-1 rotate-45 w-2 bg-myBgSecondary" />
             <p
               onClick={() => {
                 navigate(`/profile/${userProfile.id}`);

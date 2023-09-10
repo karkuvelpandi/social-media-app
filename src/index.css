@@ -13,13 +13,17 @@
 :root {
   --primary-bg-color: #fff;
   --secondary-color: #c8c8c8;
+  --bg-secondary-color: #fff;
   --dark-light-color: #000;
+  --shadow-color: #00000073;
 }
 
 .dark-theme {
   --primary-bg-color: #242329;
   --secondary-color: #000;
+  --bg-secondary-color: #000;
   --dark-light-color: #fff;
+  --shadow-color: #00000000;
 }
 
 #root {

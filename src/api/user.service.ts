@@ -7,7 +7,12 @@ import {
   getDocs,
   collection,
 } from "firebase/firestore";
-import { AddUserPostData, UserProfileInterface } from "../types/user.types";
+import {
+  AddUserPostData,
+  FollowData,
+  UserProfileInterface,
+} from "../types/user.types";
+import { AuthorInfo } from "../types/post.types";
 
 // Function to get user data from firebase based on id
 export const getUserProfile = async (userId: string) => {
@@ -17,14 +22,22 @@ export const getUserProfile = async (userId: string) => {
   return user;
 };
 
-// Function to get user data from firebase based on id
+// Get all user with particular fields
 export const getAllUsers = async () => {
   const collRef = collection(db, "users");
+
   const response = await getDocs(collRef)
     .then((snapshot) => {
-      let users: any = [];
+      let users: AuthorInfo[] = [];
       snapshot.docs.forEach((doc) => {
-        users.push({ ...doc.data(), id: doc.id });
+        // send required data for the follow card (No need to handle whole data)
+        const allData = doc.data();
+        const requiredData = {
+          userId: doc.id,
+          fullName: allData.fullName,
+          userImageUrl: allData.userImageUrl,
+        };
+        users.push(requiredData);
       });
       console.log(users);
       return users;
@@ -56,6 +69,24 @@ export const addUserPost = async (data: AddUserPostData) => {
     await updateDoc(docRef, { posts: arrayUnion(postId) });
     console.log("Document successfully updated");
     return postId; // Indicate success
+  } catch (error) {
+    console.error("Error updating document:", error);
+    return false; // Indicate failure
+  }
+};
+
+// Follow another user profile
+export const followUser = async (data: FollowData) => {
+  const { followerData, profileToFollow } = data;
+  const followerRef = doc(db, "users", followerData.userId);
+  const profileToFollowRef = doc(db, "users", profileToFollow.userId);
+  try {
+    await updateDoc(followerRef, { following: arrayUnion(profileToFollow) });
+    await updateDoc(profileToFollowRef, {
+      followers: arrayUnion(followerData),
+    });
+    console.log("Document successfully updated");
+    return data; // Indicate success
   } catch (error) {
     console.error("Error updating document:", error);
     return false; // Indicate failure

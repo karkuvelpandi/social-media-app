@@ -19,7 +19,7 @@ export const ProfileHeader = () => {
   return (
     <section
       style={{ backgroundImage: `url(${currentSelectedUser.coverImageUrl})` }}
-      className="mt-3 m-auto bg-myPrimary min-h-[160px] relative rounded-md shadow-gray-500 shadow-md flex justify-between items-center bg-cover bg-center overflow-hidden"
+      className="mt-3 m-auto bg-myPrimary min-h-[160px] relative rounded-md shadow-myShadowColor shadow-md flex justify-between items-center bg-cover bg-center overflow-hidden"
     >
       <div className="bg-black absolute inset-0 bg-opacity-30" />
       <section className="flex justify-start gap-2 items-center absolute inset-0 p-3">
@@ -27,9 +27,7 @@ export const ProfileHeader = () => {
           {currentSelectedUser.userImageUrl ? (
             <img
               src={currentSelectedUser.userImageUrl}
-              className=" bg-mySecondary rounded-full"
-              width="120px"
-              height="120px"
+              className="bg-mySecondary rounded-full w-[120px] h-[120px]"
               alt=""
             />
           ) : (
@@ -52,9 +50,9 @@ export const ProfileHeader = () => {
           <p className="text-sm font-semibold text-white cursor-default">
             <i className="pi pi-map-marker" />
             &nbsp;{" "}
-            {/* {currentSelectedUser.location.city
+            {currentSelectedUser.location.city
               ? currentSelectedUser.location.city
-              : ""} */}
+              : ""}
           </p>
           <div className="flex gap-1.5 mt-1.5">
             <i className="pi pi-twitter cursor-pointer text-[#109cd8]" />
@@ -67,7 +65,12 @@ export const ProfileHeader = () => {
         </div>
       </section>
       <p className="font-bold text-lg text-white absolute right-8 bottom-2">
-        Follower : {currentSelectedUser.followers.length}
+        {currentSelectedUser.followers.length} &nbsp;
+        {currentSelectedUser.followers
+          ? currentSelectedUser.followers.length > 1
+            ? "Followers"
+            : "Follower"
+          : "Follower"}
       </p>
     </section>
   );

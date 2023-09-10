@@ -6,7 +6,9 @@ module.exports = {
       colors: {
         myPrimary: "var(--primary-bg-color)",
         mySecondary: "var(--secondary-color)",
+        myBgSecondary: "var(--bg-secondary-color)",
         myTextColor: "var(--dark-light-color)",
+        myShadowColor: "var(--shadow-color)",
       },
     },
     screens: {

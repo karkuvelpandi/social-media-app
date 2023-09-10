@@ -11,7 +11,7 @@ export const ApplicationHeader = () => {
   const dispatch = useDispatch();
   const darkMode = useSelector((state: RootState) => state.visibility.darkMode);
   return (
-    <section className="px-4 sm:px-6 flex justify-between overflow-visible items-center shadow-gray-500 bg-myPrimary shadow-sm h-fit w-full fixed z-10 top-0">
+    <section className="px-4 sm:px-6 flex justify-between overflow-visible items-center shadow-myShadowColor bg-myPrimary shadow-sm h-fit w-full fixed z-10 top-0">
       <Link to="/">
         <p className="logo-font text-myTextColor font-bold text-6xl my-1">
           Dude

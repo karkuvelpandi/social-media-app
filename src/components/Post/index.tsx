@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux";
 import { PostInterface } from "../../types/post.types";
 import { timeAgo } from "../../utils/general.util";
 import { likePost, unlikePost } from "./post.slice";
+import { Link } from "react-router-dom";
+import { VideoPlayer } from "./components/VideoPlayer";
 //
 type PostProps = {
   // All details about the particular post
@@ -36,9 +38,12 @@ export const Post: React.FC<PostProps> = ({ post }) => {
   };
 
   return (
-    <section className="mt-3 m-auto bg-myPrimary rounded-md p-3 shadow-gray-500 shadow-md">
+    <section className="mt-3 m-auto bg-myPrimary rounded-md p-3 shadow-myShadowColor shadow-md">
       <section className="flex justify-between items-center">
-        <div className="flex gap-3 items-center">
+        <Link
+          to={`/profile/${post.authorInfo.userId}`}
+          className="flex gap-3 items-center"
+        >
           {post.authorInfo.userImageUrl ? (
             <img
               src={post.authorInfo.userImageUrl}
@@ -58,7 +63,7 @@ export const Post: React.FC<PostProps> = ({ post }) => {
                 timeAgo(post.createdAt)}
             </p>
           </div>
-        </div>
+        </Link>
 
         <i className="pi pi-ellipsis-h hover:cursor-pointer font-bold text-lg" />
       </section>
@@ -81,6 +86,9 @@ export const Post: React.FC<PostProps> = ({ post }) => {
         <section className="w-full mt-2">
           <img className="w-full rounded-md" src={post.postImages[0]} alt="" />
         </section>
+      )}
+      {post.postVideos.length > 0 && (
+        <VideoPlayer source={post.postVideos[0].src} postId={post.id} />
       )}
       <section className="flex justify-between mt-2">
         <div className="flex gap-3">

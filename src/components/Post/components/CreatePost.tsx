@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Button } from "primereact/button";
 import { RootState } from "../../../redux";
-import { CreatePostData, PostInterface } from "../../../types/post.types";
+import { CreatePostData } from "../../../types/post.types";
 import { FileUploader } from "../../../ui/FileUploader/FileUploader";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../firebaseConfig";
@@ -14,6 +15,7 @@ import {
   UserProfileInterface,
 } from "../../../types/user.types";
 
+// Component to create new post
 export const CreatePost = () => {
   const dispatch = useDispatch();
   const [percent, setPercent] = useState<number>(0);
@@ -23,7 +25,12 @@ export const CreatePost = () => {
   const [formData, setFormData] = useState<CreatePostData>({
     description: "",
     postImages: [],
-    postVideos: [],
+    postVideos: [
+      {
+        src: "",
+        viewCount: 0,
+      },
+    ],
     authorInfo: {
       userId: "",
       fullName: "",
@@ -31,6 +38,7 @@ export const CreatePost = () => {
     },
   });
 
+  // Access the store
   const userProfile: UserProfileInterface = useSelector(
     (state: RootState) => state.user.userProfile
   );
@@ -40,7 +48,9 @@ export const CreatePost = () => {
   const currentCreatedPost = useSelector(
     (state: RootState) => state.post.currentCreatedPost
   );
-
+  //
+  const isLoading = createPostStatus === AsyncState.PENDING;
+  //
   const firebaseFileUpload = (event: any, collectionName: string) => {
     const file = event.target.files[0];
     if (!file) {
@@ -66,12 +76,12 @@ export const CreatePost = () => {
             collectionName === "photos" &&
               setFormData({
                 ...formData,
-                postImages: [...formData.postImages, url],
+                postImages: [url],
               });
             collectionName === "videos" &&
               setFormData({
                 ...formData,
-                postVideos: [...formData.postVideos, url],
+                postVideos: [{ src: url, viewCount: 0 }],
               });
             return url;
           });
@@ -79,18 +89,31 @@ export const CreatePost = () => {
       );
     }
   };
+  // Function for validate the form
+  const validateForm = () => {
+    let isValid = true;
+    let descriptionError = "";
+    if (formData.description.trim() === "") {
+      descriptionError = "Description is required";
+      isValid = false;
+    }
+    setDescriptionError(descriptionError);
+    return isValid;
+  };
   const submitHandler = (e: any) => {
     e.preventDefault();
     setIsFileUploaded(false);
-    const data: CreatePostData = {
-      ...formData,
-      authorInfo: {
-        userId: userProfile.id,
-        fullName: userProfile.fullName,
-        userImageUrl: userProfile.userImageUrl,
-      },
-    };
-    dispatch(createPost(data));
+    if (validateForm()) {
+      const data: CreatePostData = {
+        ...formData,
+        authorInfo: {
+          userId: userProfile.id,
+          fullName: userProfile.fullName,
+          userImageUrl: userProfile.userImageUrl,
+        },
+      };
+      dispatch(createPost(data));
+    }
   };
 
   // Adding the created post to the userProfile
@@ -99,7 +122,9 @@ export const CreatePost = () => {
       userId: userProfile.id,
       postId: currentCreatedPost.id,
     };
-    if (createPostStatus === AsyncState.FULFILLED && currentCreatedPost) {
+    if (createPostStatus === AsyncState.FULFILLED) {
+      // Currently we are filter post by author name and getting the post
+      // This particular addUserPost is saving the post data on user profile.
       dispatch(addUserPost(data));
       setFormData({
         description: "",
@@ -113,9 +138,9 @@ export const CreatePost = () => {
       });
     }
   }, [createPostStatus, currentCreatedPost, dispatch, userProfile.id]);
-
+  //
   return (
-    <section className="mt-3 m-auto bg-myPrimary rounded-md p-3 shadow-gray-500 shadow-md">
+    <section className="mt-3 m-auto bg-myPrimary rounded-md p-3 shadow-myShadowColor shadow-md">
       <span className="text-gray-500 font-semibold">
         <i className="pi pi-pencil" />
         &nbsp; CreatePost
@@ -131,18 +156,17 @@ export const CreatePost = () => {
           <i className="pi pi-user p-1 h-7 rounded-full min-w-[28px] bg-orange-500 inline" />
         )}
         <textarea
+          value={formData.description}
           placeholder="What's on your mind?"
           className="focus:outline-none w-full h-12 sm:h-20 bg-transparent"
           name=""
           id=""
-          onBlur={(e) =>
+          onChange={(e: any) => {
+            setFormData({ ...formData, description: e.target.value });
             e.target.value
               ? setDescriptionError("")
-              : setDescriptionError("Please enter name.")
-          }
-          onChange={(e: any) =>
-            setFormData({ ...formData, description: e.target.value })
-          }
+              : setDescriptionError("Please enter name.");
+          }}
         />
       </div>
       <div className="flex justify-between mt-2">
@@ -162,13 +186,14 @@ export const CreatePost = () => {
             <p>Add video</p>
           </span>
         </div>
-        <button
+        <Button
+          loading={isLoading}
           disabled={descriptionError !== ""}
           onClick={submitHandler}
           className="px-4 font-semibold py-1 bg-blue-500 text-white rounded-md hover:cursor-pointer"
         >
           Post
-        </button>
+        </Button>
       </div>
       {collectionName && (
         <Modal

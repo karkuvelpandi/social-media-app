@@ -3,9 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux";
 import { PostInterface } from "../../types/post.types";
 import { timeAgo } from "../../utils/general.util";
-import { likePost, unlikePost } from "./post.slice";
+import { deletePost, likePost, unlikePost } from "./post.slice";
 import { Link } from "react-router-dom";
 import { VideoPlayer } from "./components/VideoPlayer";
+import { Button } from "primereact/button";
+import { Modal } from "../../ui/Modal/Modal";
+import { AsyncState } from "../../types";
 //
 type PostProps = {
   // All details about the particular post
@@ -16,7 +19,14 @@ export const Post: React.FC<PostProps> = ({ post }) => {
   const dispatch = useDispatch();
   const [liked, setLiked] = useState<boolean>(false);
   const [expandContent, setExpandContent] = useState<boolean>(false);
+  const [openDropdown, setOpenDropdown] = useState<boolean>(false);
+  const [isDelete, setIsDelete] = useState<boolean>(false);
   const userProfile = useSelector((state: RootState) => state.user.userProfile);
+  const deletePostStatus = useSelector(
+    (state: RootState) => state.post.deletePostStatus
+  );
+  //
+  const isUserAuthor = userProfile.id === post.authorInfo.userId;
   // Update likes
   useEffect(() => {
     if (post.likes.includes(userProfile.id)) {
@@ -24,6 +34,10 @@ export const Post: React.FC<PostProps> = ({ post }) => {
     } else {
       setLiked(false);
     }
+    return () => {
+      setIsDelete(false);
+      setOpenDropdown(false);
+    };
   }, [post.likes]);
 
   // Function to dispatch actions while onClick
@@ -39,7 +53,7 @@ export const Post: React.FC<PostProps> = ({ post }) => {
 
   return (
     <section className="mt-3 m-auto bg-myPrimary rounded-md p-3 shadow-myShadowColor shadow-md">
-      <section className="flex justify-between items-center">
+      <section className="flex justify-between items-center relative">
         <Link
           to={`/profile/${post.authorInfo.userId}`}
           className="flex gap-3 items-center"
@@ -64,8 +78,54 @@ export const Post: React.FC<PostProps> = ({ post }) => {
             </p>
           </div>
         </Link>
-
-        <i className="pi pi-ellipsis-h hover:cursor-pointer font-bold text-lg" />
+        {isUserAuthor && (
+          <button onClick={() => setOpenDropdown(!openDropdown)}>
+            <i className="pi pi-ellipsis-h cursor-pointer font-bold text-lg" />
+          </button>
+        )}
+        {openDropdown && (
+          <div className="absolute pageInEffectDown right-0 top-8 bg-myBgSecondary text-myTextColor h-fit w-24 shadow-sm shadow-myTextColor rounded-md">
+            <p
+              onClick={() => setIsDelete(true)}
+              className="border-l-[3px] bg-red-500 text-white border-transparent rounded-t-md hover:border-blue-500 px-2 py-1 cursor-pointer font-semibold overflow-hidden"
+            >
+              Delete
+            </p>
+          </div>
+        )}
+        {isDelete && (
+          <Modal
+            withShade
+            ghostClose
+            allCentered
+            onBackdropClick={() => {
+              setIsDelete(false);
+              setOpenDropdown(false);
+            }}
+          >
+            <div className="flex flex-col bg-myPrimary p-5 rounded-md space-y-4">
+              <p>Are your sure this is permanent?</p>
+              <div className="flex justify-between h-7 px-2">
+                <Button
+                  onClick={() => dispatch(deletePost(post.id))}
+                  className="bg-red-500"
+                  loading={deletePostStatus === AsyncState.PENDING}
+                >
+                  Yes
+                </Button>
+                <Button
+                  className="flex justify-center bg-blue-500"
+                  onClick={() => {
+                    setIsDelete(false);
+                    setOpenDropdown(false);
+                  }}
+                >
+                  No
+                </Button>
+              </div>
+            </div>
+          </Modal>
+        )}
       </section>
       <section className="mt-2">
         <p className="inline">
@@ -88,7 +148,11 @@ export const Post: React.FC<PostProps> = ({ post }) => {
         </section>
       )}
       {post.postVideos.length > 0 && (
-        <VideoPlayer source={post.postVideos[0].src} postId={post.id} />
+        <VideoPlayer
+          source={post.postVideos[0].src}
+          viewCount={post.postVideos[0].viewCount}
+          postId={post.id}
+        />
       )}
       <section className="flex justify-between mt-2">
         <div className="flex gap-3">

@@ -25,12 +25,7 @@ export const CreatePost = () => {
   const [formData, setFormData] = useState<CreatePostData>({
     description: "",
     postImages: [],
-    postVideos: [
-      {
-        src: "",
-        viewCount: 0,
-      },
-    ],
+    postVideos: [],
     authorInfo: {
       userId: "",
       fullName: "",
@@ -42,12 +37,16 @@ export const CreatePost = () => {
   const userProfile: UserProfileInterface = useSelector(
     (state: RootState) => state.user.userProfile
   );
+  const getUserProfileStatus = useSelector(
+    (state: RootState) => state.user.getUserProfileStatus
+  );
   const createPostStatus = useSelector(
     (state: RootState) => state.post.createPostStatus
   );
   const currentCreatedPost = useSelector(
     (state: RootState) => state.post.currentCreatedPost
   );
+  const darkMode = useSelector((state: RootState) => state.visibility.darkMode);
   //
   const isLoading = createPostStatus === AsyncState.PENDING;
   //
@@ -81,7 +80,10 @@ export const CreatePost = () => {
             collectionName === "videos" &&
               setFormData({
                 ...formData,
-                postVideos: [{ src: url, viewCount: 0 }],
+                postVideos: [
+                  ...formData.postVideos,
+                  { src: url, viewCount: 0 },
+                ],
               });
             return url;
           });
@@ -118,13 +120,15 @@ export const CreatePost = () => {
 
   // Adding the created post to the userProfile
   useEffect(() => {
-    const data: AddUserPostData = {
-      userId: userProfile.id,
-      postId: currentCreatedPost.id,
-    };
     if (createPostStatus === AsyncState.FULFILLED) {
+      console.log(currentCreatedPost);
+      const data: AddUserPostData = {
+        userId: userProfile.id,
+        postId: currentCreatedPost.id,
+      };
       // Currently we are filter post by author name and getting the post
       // This particular addUserPost is saving the post data on user profile.
+      console.log(data);
       dispatch(addUserPost(data));
       setFormData({
         description: "",
@@ -137,8 +141,9 @@ export const CreatePost = () => {
         },
       });
     }
-  }, [createPostStatus, currentCreatedPost, dispatch, userProfile.id]);
+  }, [createPostStatus, currentCreatedPost.id, dispatch, userProfile.id]);
   //
+  console.log(formData);
   return (
     <section className="mt-3 m-auto bg-myPrimary rounded-md p-3 shadow-myShadowColor shadow-md">
       <span className="text-gray-500 font-semibold">
@@ -146,14 +151,25 @@ export const CreatePost = () => {
         &nbsp; CreatePost
       </span>
       <div className="flex border-2 border-gray-300 p-1 rounded-md gap-1.5 mt-1">
-        {userProfile.userImageUrl ? (
-          <img
-            src={userProfile.userImageUrl}
-            className="h-7 rounded-full min-w-[28px] border-[1px] border-mySecondary"
-            alt="profile"
+        {getUserProfileStatus === AsyncState.PENDING && (
+          <div
+            className={`h-7 rounded-full min-w-[28px] border-[1px] border-mySecondary ${
+              darkMode ? "loader-bg-dark" : "loader-bg"
+            }`}
           />
-        ) : (
-          <i className="pi pi-user p-1 h-7 rounded-full min-w-[28px] bg-orange-500 inline" />
+        )}
+        {getUserProfileStatus === AsyncState.FULFILLED && (
+          <>
+            {userProfile.userImageUrl ? (
+              <img
+                src={userProfile.userImageUrl}
+                className="h-7 rounded-full min-w-[28px] border-[1px] border-mySecondary"
+                alt="profile"
+              />
+            ) : (
+              <i className="pi pi-user h-7 flex justify-center items-center rounded-full min-w-[28px] text-md bg-mySecondary" />
+            )}
+          </>
         )}
         <textarea
           value={formData.description}

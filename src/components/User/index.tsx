@@ -32,7 +32,7 @@ export const Profile = () => {
   return (
     <div className="flex-1 mx-[20px] overflow-y-auto pb-10 ">
       <ProfileHeader />
-      <ProfileTabs />
+      {/* <ProfileTabs /> */}
       <Routes>
         <Route path="/" element={<Feeds context="profile" />} />
         <Route path="/about" element={<ProfileAbout />} />

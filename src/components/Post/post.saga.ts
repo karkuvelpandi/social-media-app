@@ -12,6 +12,7 @@ export const Actions = {
   likePost: "post/like-post ",
   unlikePost: "post/unlike-post ",
   addVideoView: "post/add-video-view ",
+  deletePost: "post/delete-post",
 };
 // Saga function for create new post
 function* createPostSaga() {
@@ -123,7 +124,29 @@ function* unlikePostSaga() {
     }
   );
 }
-
+// Delete particular post
+function* deletePostSaga() {
+  yield takeEvery(
+    Actions.deletePost + ActionState.REQUEST,
+    function* (action: PayloadAction<string>): any {
+      try {
+        yield put({ type: Actions.deletePost + ActionState.PENDING });
+        const data = yield call(() => firebaseApi.deletePost(action.payload));
+        if (!data) throw new Error();
+        yield put({
+          type: Actions.deletePost + ActionState.FULFILLED,
+          payload: data,
+        });
+      } catch (error: any) {
+        yield put({
+          type: Actions.deletePost + ActionState.REJECTED,
+          payload: error?.message || "Something wrong happened",
+        });
+      }
+    }
+  );
+}
+// Add video view count
 function* addVideoViewSaga() {
   yield takeEvery(
     Actions.addVideoView + ActionState.REQUEST,
@@ -152,4 +175,5 @@ export const postSagas = [
   likePostSaga(),
   unlikePostSaga(),
   addVideoViewSaga(),
+  deletePostSaga(),
 ];

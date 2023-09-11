@@ -23,6 +23,9 @@ export const unlikePost = createAction<AddUserPostData>(
 export const addVideoView = createAction<string>(
   Actions.addVideoView + ActionState.REQUEST
 );
+export const deletePost = createAction<string>(
+  Actions.deletePost + ActionState.REQUEST
+);
 
 // State interface
 interface PostInitialState {
@@ -39,6 +42,8 @@ interface PostInitialState {
   likePostError: string;
   unlikePostStatus: string;
   unlikePostError: string;
+  deletePostStatus: string;
+  deletePostError: string;
   addVideoViewError: string;
 }
 // State
@@ -69,6 +74,8 @@ const initialState: PostInitialState = {
   likePostError: "",
   unlikePostStatus: AsyncState.IDLE,
   unlikePostError: "",
+  deletePostStatus: AsyncState.IDLE,
+  deletePostError: "",
   addVideoViewError: "",
 };
 
@@ -216,6 +223,31 @@ const postSlice = createSlice({
       (state, action: PayloadAction<any>) => {
         state.unlikePostStatus = AsyncState.REJECTED;
         state.unlikePostError = action.payload;
+      }
+    );
+    // Delete post
+    builder.addCase(Actions.deletePost + ActionState.PENDING, (state) => {
+      state.deletePostStatus = AsyncState.PENDING;
+      state.deletePostError = "";
+    });
+    builder.addCase(
+      Actions.deletePost + ActionState.FULFILLED,
+      (state, action: PayloadAction<string>) => {
+        state.userPosts = state.userPosts.filter(
+          (post) => post.id !== action.payload
+        );
+        state.userFeedPosts = state.userFeedPosts.filter(
+          (post) => post.id !== action.payload
+        );
+        state.deletePostStatus = AsyncState.FULFILLED;
+        state.deletePostError = "";
+      }
+    );
+    builder.addCase(
+      Actions.deletePost + ActionState.REJECTED,
+      (state, action: PayloadAction<any>) => {
+        state.deletePostStatus = AsyncState.REJECTED;
+        state.deletePostError = action.payload;
       }
     );
     // Add video view

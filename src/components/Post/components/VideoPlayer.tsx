@@ -1,11 +1,17 @@
 import React, { useRef, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { addVideoView } from "../post.slice";
+import { VideoInfo } from "../../../types/post.types";
 type VideoPlayerProps = {
   source: string;
   postId: string;
+  viewCount: number;
 };
-export const VideoPlayer: React.FC<VideoPlayerProps> = ({ source, postId }) => {
+export const VideoPlayer: React.FC<VideoPlayerProps> = ({
+  source,
+  postId,
+  viewCount,
+}) => {
   const dispatch = useDispatch();
   const videoRef = useRef<any>();
   // Observe the video
@@ -48,6 +54,10 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ source, postId }) => {
       >
         <source src={source} type="video/mp4" />
       </video>
+      {/* <p>
+        <i className="pi pi-eye" />
+        {video.viewCount}
+      </p> */}
     </section>
   );
 };

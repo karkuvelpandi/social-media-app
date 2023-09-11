@@ -61,8 +61,26 @@ html {
   scrollbar-width: none;
 }
 
+/* Loader animation */
+.loader-bg {
+  background: linear-gradient(90deg, #e8e8e8 10%, #f1f1f1 20%, #e7e6e6 35%);
+  background-size: 200% 100%;
+  animation: 1s shine linear infinite;
+}
 
+.loader-bg-dark {
+  background: linear-gradient(90deg, #333 10%, #444 20%, #222 35%);
+  background-size: 200% 100%;
+  animation: 1s shine linear infinite;
+}
 
+@keyframes shine {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+/* Animations */
 .pageInEffectDown {
   animation: pageInEffectDown ease 0.3s;
   animation-iteration-count: 1;
@@ -73,6 +91,24 @@ html {
   0% {
     opacity: 0.5;
     transform: translateY(-5px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pageInEffectUp {
+  animation: pageInEffectUp ease 0.5s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+@keyframes pageInEffectUp {
+  0% {
+    opacity: 0;
+    transform: translateY(5px);
   }
 
   100% {

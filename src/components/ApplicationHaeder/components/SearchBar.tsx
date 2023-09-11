@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import { InputText } from "primereact/inputtext";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../redux";
+import { search } from "../../../api/post.service";
+// Prop type
 type SearchBarProps = {
   context?: "mobile";
 };
+// Component to get search keyword from user
 export const SearchBar: React.FC<SearchBarProps> = () => {
+  const dispatch = useDispatch();
   const [show, setShow] = useState<boolean>(false);
   const [keyword, setKeyword] = useState<string>("");
   const darkMode = useSelector((state: RootState) => state.visibility.darkMode);
@@ -13,7 +17,8 @@ export const SearchBar: React.FC<SearchBarProps> = () => {
     <>
       <span className="p-input-icon-right text-myTextColor xxs:hidden sm:block sm:w-auto xxs:top-0 xxs:left-0 sm:relative">
         <i
-          className={`pi pi-search font-bold ${
+          onClick={() => search(keyword)}
+          className={`pi pi-search font-bold cursor-pointer ${
             darkMode ? "text-white" : "text-black"
           } `}
         />

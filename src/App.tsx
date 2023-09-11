@@ -63,12 +63,14 @@ const App = () => {
       dispatch(getUserProfile(userId));
       dispatch(getFeedPosts());
       dispatch(getAllUsers());
+      console.log("first");
     }
     if (
       (userId && signUpStatus === AsyncState.FULFILLED) ||
       (userId && loginStatus === AsyncState.FULFILLED)
     ) {
       dispatch(getUserProfile(userId));
+      console.log("second");
     }
   }, [signUpStatus, loginStatus]);
 

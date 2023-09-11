@@ -2,10 +2,14 @@ import {
   doc,
   query,
   where,
+  endAt,
   addDoc,
   getDoc,
+  orderBy,
+  startAt,
   getDocs,
   updateDoc,
+  deleteDoc,
   collection,
   arrayUnion,
   arrayRemove,
@@ -22,7 +26,7 @@ export const createPost = async (formData: CreatePostData) => {
   const response = await addDoc(collRef, post)
     .then((response) => {
       const newPost = {
-        postId: response.id,
+        id: response.id,
         ...post,
       };
       return newPost;
@@ -143,6 +147,39 @@ export const addVideoView = async (postId: string) => {
     }
   } catch (error) {
     console.error("Error updating viewCount:", error);
+    return false; // Indicate failure
+  }
+};
+// Search by post description content with keyword input by the user.
+export const search = async (keyword: string) => {
+  const collRef = collection(db, "posts");
+  const q = query(
+    collRef,
+    where("description", ">=", keyword),
+    where("description", "<=", `${keyword}\uf8ff`)
+  );
+
+  const posts: any = [];
+  const docs = await getDocs(q);
+  docs.forEach((doc) => {
+    posts.push({
+      id: doc.id,
+      ...doc.data(),
+    });
+  });
+};
+
+// Delete a particular post
+export const deletePost = async (postId: string) => {
+  // Document reference
+  const docRef = doc(db, "posts", postId);
+  try {
+    // Delete the post
+    await deleteDoc(docRef);
+    console.log("Post deleted successfully");
+    return postId; // Indicate success
+  } catch (error) {
+    console.error("Error deleting post:", error);
     return false; // Indicate failure
   }
 };

@@ -1,7 +1,16 @@
 import { PayloadAction, createAction, createSlice } from "@reduxjs/toolkit";
 import { Actions } from "./post.saga";
 import { ActionState, AsyncState } from "../../types";
-import { CreatePostData, PostInterface } from "../../types/post.types";
+import {
+  CommentFormData,
+  CommentInterface,
+  CommentReply,
+  CommentReplyFormData,
+  CreatePostData,
+  LikeCommentFormData,
+  LikeReplyFormData,
+  PostInterface,
+} from "../../types/post.types";
 import { AddUserPostData } from "../../types/user.types";
 
 // Actions
@@ -26,7 +35,21 @@ export const addVideoView = createAction<string>(
 export const deletePost = createAction<string>(
   Actions.deletePost + ActionState.REQUEST
 );
-
+export const addComment = createAction<CommentFormData>(
+  Actions.addComment + ActionState.REQUEST
+);
+export const replyComment = createAction<CommentReplyFormData>(
+  Actions.replyComment + ActionState.REQUEST
+);
+export const getPostComments = createAction<string>(
+  Actions.getPostComments + ActionState.REQUEST
+);
+export const likeComment = createAction<LikeCommentFormData>(
+  Actions.likeComment + ActionState.REQUEST
+);
+export const likeReply = createAction<LikeReplyFormData>(
+  Actions.likeReply + ActionState.REQUEST
+);
 // State interface
 interface PostInitialState {
   userPosts: PostInterface[];
@@ -45,6 +68,16 @@ interface PostInitialState {
   deletePostStatus: string;
   deletePostError: string;
   addVideoViewError: string;
+  addCommentStatus: string;
+  addCommentError: string;
+  getPostCommentsStatus: string;
+  getPostCommentsError: string;
+  replyCommentStatus: string;
+  replyCommentError: string;
+  likeCommentStatus: string;
+  likeCommentError: string;
+  likeReplyStatus: string;
+  likeReplyError: string;
 }
 // State
 const initialState: PostInitialState = {
@@ -63,6 +96,7 @@ const initialState: PostInitialState = {
     comments: [],
     shares: 0,
     id: "",
+    commentCount: 0,
   },
   createPostStatus: AsyncState.IDLE,
   createPostError: "",
@@ -77,6 +111,16 @@ const initialState: PostInitialState = {
   deletePostStatus: AsyncState.IDLE,
   deletePostError: "",
   addVideoViewError: "",
+  addCommentStatus: AsyncState.IDLE,
+  addCommentError: "",
+  getPostCommentsStatus: AsyncState.IDLE,
+  getPostCommentsError: "",
+  replyCommentStatus: AsyncState.IDLE,
+  replyCommentError: "",
+  likeCommentStatus: AsyncState.IDLE,
+  likeCommentError: "",
+  likeReplyStatus: AsyncState.IDLE,
+  likeReplyError: "",
 };
 
 // Slice of the store for post
@@ -275,6 +319,247 @@ const postSlice = createSlice({
       Actions.addVideoView + ActionState.REJECTED,
       (state, action: PayloadAction<any>) => {
         state.addVideoViewError = action.payload;
+      }
+    );
+    // Add post comment
+    builder.addCase(Actions.addComment + ActionState.PENDING, (state) => {
+      state.addCommentStatus = AsyncState.PENDING;
+      state.addCommentError = "";
+    });
+    builder.addCase(
+      Actions.addComment + ActionState.FULFILLED,
+      (state, action: PayloadAction<CommentInterface>) => {
+        const { postId } = action.payload;
+        state.userPosts = state.userPosts.map((post) => {
+          if (post.id === postId) {
+            post.comments = [action.payload, ...post.comments];
+            post.commentCount = post.commentCount++;
+            return post;
+          } else {
+            return post;
+          }
+        });
+        state.userFeedPosts = state.userFeedPosts.map((post) => {
+          if (post.id === postId) {
+            post.comments = [action.payload, ...post.comments];
+            post.commentCount = post.commentCount++;
+            return post;
+          } else {
+            return post;
+          }
+        });
+        state.addCommentStatus = AsyncState.FULFILLED;
+        state.addCommentError = "";
+      }
+    );
+    builder.addCase(
+      Actions.addComment + ActionState.REJECTED,
+      (state, action: PayloadAction<any>) => {
+        state.addCommentStatus = AsyncState.REJECTED;
+        state.addCommentError = action.payload;
+      }
+    );
+    // Get post comments
+    builder.addCase(Actions.getPostComments + ActionState.PENDING, (state) => {
+      state.getPostCommentsStatus = AsyncState.PENDING;
+      state.getPostCommentsError = "";
+    });
+    builder.addCase(
+      Actions.getPostComments + ActionState.FULFILLED,
+      (state, action: PayloadAction<any>) => {
+        const { comments, postId } = action.payload;
+        state.userPosts = state.userPosts.map((post) => {
+          if (post.id === postId) {
+            post.comments = comments;
+            return post;
+          } else {
+            return post;
+          }
+        });
+        state.userFeedPosts = state.userFeedPosts.map((post) => {
+          if (post.id === postId) {
+            post.comments = comments;
+            return post;
+          } else {
+            return post;
+          }
+        });
+        state.getPostCommentsStatus = AsyncState.FULFILLED;
+        state.getPostCommentsError = "";
+      }
+    );
+    builder.addCase(
+      Actions.getPostComments + ActionState.REJECTED,
+      (state, action: PayloadAction<any>) => {
+        state.getPostCommentsStatus = AsyncState.REJECTED;
+        state.getPostCommentsError = action.payload;
+      }
+    );
+    // Reply comments
+    builder.addCase(Actions.replyComment + ActionState.PENDING, (state) => {
+      state.replyCommentStatus = AsyncState.PENDING;
+      state.replyCommentError = "";
+    });
+    builder.addCase(
+      Actions.replyComment + ActionState.FULFILLED,
+      (state, action: PayloadAction<CommentReply>) => {
+        const { commentId, postId } = action.payload;
+        state.userPosts = state.userPosts.map((post) => {
+          if (post.id === postId) {
+            if (post.comments.length > 0) {
+              post.comments = post.comments.map((comment) => {
+                if (comment.id === commentId) {
+                  comment.replies = [...comment.replies, action.payload];
+                  return comment;
+                } else {
+                  return comment;
+                }
+              });
+            }
+            return post;
+          } else {
+            return post;
+          }
+        });
+        state.userFeedPosts = state.userFeedPosts.map((post) => {
+          if (post.id === postId) {
+            if (post.comments.length > 0) {
+              post.comments = post.comments.map((comment) => {
+                if (comment.id === commentId) {
+                  comment.replies = [...comment.replies, action.payload];
+                  return comment;
+                } else {
+                  return comment;
+                }
+              });
+            }
+            return post;
+          } else {
+            return post;
+          }
+        });
+        state.replyCommentStatus = AsyncState.FULFILLED;
+        state.replyCommentError = "";
+      }
+    );
+    builder.addCase(
+      Actions.replyComment + ActionState.REJECTED,
+      (state, action: PayloadAction<any>) => {
+        state.replyCommentStatus = AsyncState.REJECTED;
+        state.replyCommentError = action.payload;
+      }
+    );
+    // Like comment
+    builder.addCase(Actions.likeComment + ActionState.PENDING, (state) => {
+      state.likeCommentStatus = AsyncState.PENDING;
+      state.likeCommentError = "";
+    });
+    builder.addCase(
+      Actions.likeComment + ActionState.FULFILLED,
+      (state, action: PayloadAction<LikeCommentFormData>) => {
+        const { postId, commentId, userId } = action.payload;
+        state.userPosts = state.userPosts.map((post) => {
+          if (postId === post.id) {
+            post.comments = post.comments.map((comment) => {
+              if (
+                comment.id === commentId &&
+                !comment.commentLikes.includes(userId)
+              ) {
+                comment.commentLikes = [userId, ...comment.commentLikes];
+                return comment;
+              }
+              return comment;
+            });
+          }
+          return post;
+        });
+        state.userFeedPosts = state.userFeedPosts.map((post) => {
+          if (postId === post.id) {
+            post.comments = post.comments.map((comment) => {
+              if (
+                comment.id === commentId &&
+                !comment.commentLikes.includes(userId)
+              ) {
+                comment.commentLikes = [userId, ...comment.commentLikes];
+                return comment;
+              }
+              return comment;
+            });
+          }
+          return post;
+        });
+        state.likeCommentStatus = AsyncState.FULFILLED;
+        state.likeCommentError = "";
+      }
+    );
+    builder.addCase(
+      Actions.likeComment + ActionState.REJECTED,
+      (state, action: PayloadAction<any>) => {
+        state.likeCommentStatus = AsyncState.REJECTED;
+        state.likeCommentError = action.payload;
+      }
+    );
+    // Like Reply
+    builder.addCase(Actions.likeReply + ActionState.PENDING, (state) => {
+      state.likeReplyStatus = AsyncState.PENDING;
+      state.likeReplyError = "";
+    });
+    builder.addCase(
+      Actions.likeReply + ActionState.FULFILLED,
+      (state, action: PayloadAction<LikeReplyFormData>) => {
+        const { postId, commentId, userId, replyId } = action.payload;
+        state.userPosts = state.userPosts.map((post) => {
+          if (postId === post.id) {
+            post.comments = post.comments.map((comment) => {
+              if (comment.id === commentId) {
+                comment.replies = comment.replies.map((reply) => {
+                  if (
+                    reply.replyId === replyId &&
+                    !reply.replyLikes.includes(userId)
+                  ) {
+                    reply.replyLikes = [userId, ...reply.replyLikes];
+                    return reply;
+                  } else {
+                    return reply;
+                  }
+                });
+                return comment;
+              }
+              return comment;
+            });
+            return post;
+          }
+          return post;
+        });
+        state.userFeedPosts = state.userFeedPosts.map((post) => {
+          if (postId === post.id) {
+            post.comments = post.comments.map((comment) => {
+              if (comment.id === commentId) {
+                comment.replies = comment.replies.map((reply) => {
+                  if (reply.replyId === replyId) {
+                    reply.replyLikes = [userId, ...reply.replyLikes];
+                    return reply;
+                  } else {
+                    return reply;
+                  }
+                });
+                return comment;
+              }
+              return comment;
+            });
+            return post;
+          }
+          return post;
+        });
+        state.likeReplyStatus = AsyncState.FULFILLED;
+        state.likeReplyError = "";
+      }
+    );
+    builder.addCase(
+      Actions.likeReply + ActionState.REJECTED,
+      (state, action: PayloadAction<any>) => {
+        state.likeReplyStatus = AsyncState.REJECTED;
+        state.likeReplyError = action.payload;
       }
     );
   },

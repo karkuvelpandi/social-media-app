@@ -1,7 +1,14 @@
 import { ActionState } from "../../types";
 import { PayloadAction } from "@reduxjs/toolkit";
 import * as firebaseApi from "../../api/post.service";
-import { CreatePostData } from "../../types/post.types";
+import {
+  CommentFormData,
+  CommentInterface,
+  CommentReplyFormData,
+  CreatePostData,
+  LikeCommentFormData,
+  LikeReplyFormData,
+} from "../../types/post.types";
 import { takeEvery, put, call } from "redux-saga/effects";
 import { AddUserPostData } from "../../types/user.types";
 // Action types
@@ -12,7 +19,12 @@ export const Actions = {
   likePost: "post/like-post ",
   unlikePost: "post/unlike-post ",
   addVideoView: "post/add-video-view ",
-  deletePost: "post/delete-post",
+  deletePost: "post/delete-post ",
+  addComment: "post/add-comment ",
+  replyComment: "post/reply-comment ",
+  getPostComments: "post/get-post-comments ",
+  likeComment: "post/like-comment ",
+  likeReply: "post/like-reply",
 };
 // Saga function for create new post
 function* createPostSaga() {
@@ -167,6 +179,113 @@ function* addVideoViewSaga() {
     }
   );
 }
+// Add post comment
+function* addCommentSaga() {
+  yield takeEvery(
+    Actions.addComment + ActionState.REQUEST,
+    function* (action: PayloadAction<CommentFormData>): any {
+      try {
+        const data = yield call(() => firebaseApi.addComment(action.payload));
+        if (!data) throw new Error();
+        yield put({
+          type: Actions.addComment + ActionState.FULFILLED,
+          payload: data,
+        });
+      } catch (error: any) {
+        yield put({
+          type: Actions.addComment + ActionState.REJECTED,
+          payload: error?.message || "Something wrong happened",
+        });
+      }
+    }
+  );
+}
+// Reply post comment
+function* replyCommentSaga() {
+  yield takeEvery(
+    Actions.replyComment + ActionState.REQUEST,
+    function* (action: PayloadAction<CommentReplyFormData>): any {
+      try {
+        const data = yield call(() => firebaseApi.replyComment(action.payload));
+        if (!data) throw new Error();
+        yield put({
+          type: Actions.replyComment + ActionState.FULFILLED,
+          payload: data,
+        });
+      } catch (error: any) {
+        yield put({
+          type: Actions.replyComment + ActionState.REJECTED,
+          payload: error?.message || "Something wrong happened",
+        });
+      }
+    }
+  );
+}
+// Get post comments
+function* getPostCommentsSaga() {
+  yield takeEvery(
+    Actions.getPostComments + ActionState.REQUEST,
+    function* (action: PayloadAction<string>): any {
+      try {
+        const data = yield call(() =>
+          firebaseApi.getPostComments(action.payload)
+        );
+        if (!data) throw new Error();
+        yield put({
+          type: Actions.getPostComments + ActionState.FULFILLED,
+          payload: data,
+        });
+      } catch (error: any) {
+        yield put({
+          type: Actions.getPostComments + ActionState.REJECTED,
+          payload: error?.message || "Something wrong happened",
+        });
+      }
+    }
+  );
+}
+// like post comments
+function* likeCommentSaga() {
+  yield takeEvery(
+    Actions.likeComment + ActionState.REQUEST,
+    function* (action: PayloadAction<LikeCommentFormData>): any {
+      try {
+        const data = yield call(() => firebaseApi.likeComment(action.payload));
+        if (!data) throw new Error();
+        yield put({
+          type: Actions.likeComment + ActionState.FULFILLED,
+          payload: data,
+        });
+      } catch (error: any) {
+        yield put({
+          type: Actions.likeComment + ActionState.REJECTED,
+          payload: error?.message || "Something wrong happened",
+        });
+      }
+    }
+  );
+}
+// like Reply comments
+function* likeReplySaga() {
+  yield takeEvery(
+    Actions.likeReply + ActionState.REQUEST,
+    function* (action: PayloadAction<LikeReplyFormData>): any {
+      try {
+        const data = yield call(() => firebaseApi.likeReply(action.payload));
+        if (!data) throw new Error();
+        yield put({
+          type: Actions.likeReply + ActionState.FULFILLED,
+          payload: data,
+        });
+      } catch (error: any) {
+        yield put({
+          type: Actions.likeReply + ActionState.REJECTED,
+          payload: error?.message || "Something wrong happened",
+        });
+      }
+    }
+  );
+}
 
 export const postSagas = [
   createPostSaga(),
@@ -176,4 +295,9 @@ export const postSagas = [
   unlikePostSaga(),
   addVideoViewSaga(),
   deletePostSaga(),
+  addCommentSaga(),
+  replyCommentSaga(),
+  getPostCommentsSaga(),
+  likeCommentSaga(),
+  likeReplySaga(),
 ];

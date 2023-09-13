@@ -15,8 +15,16 @@ import {
   arrayRemove,
 } from "firebase/firestore";
 import { db } from "../firebaseConfig";
-import { newPost } from "../utils/psot.util";
-import { CreatePostData } from "../types/post.types";
+import { newComment, newCommentReply, newPost } from "../utils/psot.util";
+import {
+  CommentFormData,
+  CommentInterface,
+  CommentReply,
+  CommentReplyFormData,
+  CreatePostData,
+  LikeCommentFormData,
+  LikeReplyFormData,
+} from "../types/post.types";
 import { AddUserPostData } from "../types/user.types";
 
 // Create new post
@@ -110,7 +118,7 @@ export const unlikePost = async (data: AddUserPostData) => {
     console.log("Unlike successfully updated");
     return data; // Indicate success
   } catch (error) {
-    console.error("Error updating Like:", error);
+    console.error("Error updating unlike:", error);
     return false; // Indicate failure
   }
 };
@@ -180,6 +188,115 @@ export const deletePost = async (postId: string) => {
     return postId; // Indicate success
   } catch (error) {
     console.error("Error deleting post:", error);
+    return false; // Indicate failure
+  }
+};
+
+// Add post comment
+export const addComment = async (formData: CommentFormData) => {
+  const collRef = collection(db, "comments");
+  const comment = newComment(formData);
+  const response = await addDoc(collRef, comment)
+    .then((response) => {
+      const newComment = {
+        id: response.id,
+        ...comment,
+      };
+      return newComment;
+    })
+    .catch((error) => {
+      return error;
+    });
+  // Update comment count inside the post doc
+  const docRef = doc(db, "posts", formData.postId);
+  const postDoc = await getDoc(docRef);
+  const post = { ...postDoc.data() };
+  if (response && post.commentCount) {
+    const currentCount = post.commentCount;
+    await updateDoc(docRef, { commentCount: currentCount + 1 });
+  } else {
+    await updateDoc(docRef, { commentCount: 1 });
+  }
+  return response;
+};
+
+// Reply comment
+export const replyComment = async (formData: CommentReplyFormData) => {
+  const docRef = doc(db, "comments", formData.commentId);
+  const reply = newCommentReply(formData);
+  try {
+    // Update reply
+    await updateDoc(docRef, { replies: arrayUnion(reply) });
+    console.log("Reply successfully updated");
+    return reply; // Indicate success
+  } catch (error) {
+    console.error("Error updating reply:", error);
+    return false; // Indicate failure
+  }
+};
+
+// Get post comments
+export const getPostComments = async (postId: string) => {
+  const collRef = collection(db, "comments");
+  const q = query(collRef, where("postId", "==", postId));
+  const response = await getDocs(q)
+    .then((snapshot) => {
+      let comments: any = [];
+      snapshot.docs.forEach((doc) => {
+        comments.push({ ...doc.data(), id: doc.id });
+      });
+      return { comments, postId };
+    })
+    .catch((error) => {
+      console.log(error);
+      return error;
+    });
+  return response;
+};
+
+// Like a particular comment
+export const likeComment = async (data: LikeCommentFormData) => {
+  const { commentId, userId } = data;
+  const commentRef = doc(db, "comments", commentId);
+
+  try {
+    // Update reply
+    await updateDoc(commentRef, {
+      commentLikes: arrayUnion(userId),
+    });
+    console.log("Like successfully updated");
+    return data; // Indicate success
+  } catch (error) {
+    console.error("Error updating reply:", error);
+    return false; // Indicate failure
+  }
+};
+
+// Like a particular reply
+export const likeReply = async (data: LikeReplyFormData) => {
+  const { commentId, userId, replyId } = data;
+  const commentRef = doc(db, "comments", commentId);
+
+  try {
+    const commentDoc = await getDoc(commentRef);
+    const comment = { ...commentDoc.data() };
+    const updatedReplies = comment.replies.map((reply: CommentReply) => {
+      if (reply.replyId === replyId) {
+        const updatedReply = { ...reply };
+        updatedReply.replyLikes = [userId, ...reply.replyLikes];
+        return updatedReply;
+      } else {
+        return reply;
+      }
+    });
+    // Update reply likes
+    await updateDoc(commentRef, {
+      replies: updatedReplies,
+    });
+    console.log("Reply like successfully updated");
+    return data; // Indicate success
+  } catch (error) {
+    console.error("Error updating reply:", error);
     return false; // Indicate failure
   }
 };

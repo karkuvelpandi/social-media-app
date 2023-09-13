@@ -45,8 +45,9 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
     };
   }, []);
   return (
-    <section className="w-full mt-2">
+    <section className="max-h-[600px] mx-auto mt-2">
       <video
+        className="max-h-[600px] mx-auto"
         ref={videoRef}
         onEnded={() => dispatch(addVideoView(postId))}
         controls

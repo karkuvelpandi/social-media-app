@@ -65,7 +65,7 @@ export const ReplyCard: React.FC<ReplyCardProps> = ({
           <span
             onClick={likeHandler}
             className={`cursor-pointer ${
-              reply.replyLikes.length > 0 && "text-blue-400"
+              reply.replyLikes.length > 0 && "text-blue-400 hover:text-blue-500"
             }`}
           >
             {reply.replyLikes.length > 0
@@ -76,7 +76,7 @@ export const ReplyCard: React.FC<ReplyCardProps> = ({
           </span>
           <span
             onClick={() => setActiveReplyTab(!activeReplyTab)}
-            className="cursor-pointer"
+            className="cursor-pointer hover:text-gray-500"
           >
             Reply
           </span>

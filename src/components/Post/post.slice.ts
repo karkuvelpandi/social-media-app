@@ -465,6 +465,7 @@ const postSlice = createSlice({
                 comment.id === commentId &&
                 !comment.commentLikes.includes(userId)
               ) {
+                console.log("Adding like on slice");
                 comment.commentLikes = [userId, ...comment.commentLikes];
                 return comment;
               }
@@ -480,6 +481,7 @@ const postSlice = createSlice({
                 comment.id === commentId &&
                 !comment.commentLikes.includes(userId)
               ) {
+                console.log("Adding like on slice");
                 comment.commentLikes = [userId, ...comment.commentLikes];
                 return comment;
               }

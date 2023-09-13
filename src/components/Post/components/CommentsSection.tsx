@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import {
   CommentFormData,
   CommentInterface,
+  LikeCommentFormData,
   PostInterface,
 } from "../../../types/post.types";
 import { InputText } from "primereact/inputtext";
 import EmojiPicker from "emoji-picker-react";
 import { useDispatch, useSelector } from "react-redux";
-import { addComment } from "../post.slice";
+import { addComment, likeComment } from "../post.slice";
 import { RootState } from "../../../redux";
 import { timeAgoShort } from "../../../utils/general.util";
 import { ReplyComment } from "./ReplyComment";
@@ -46,7 +47,16 @@ export const CommentsSection: React.FC<CommentsSectionProps> = ({
     dispatch(addComment(data));
     setCommentText("");
   };
-
+  //
+  const likeHandler = (commentId: string, commentLikes: string[]) => {
+    const data: LikeCommentFormData = {
+      postId: post.id,
+      commentId: commentId,
+      userId: userProfile.id,
+    };
+    if (!commentLikes.includes(userProfile.id)) dispatch(likeComment(data));
+    else console.log("Already Liked...");
+  };
   return (
     <section className="w-full mt-2">
       <div className="w-full flex items-center gap-2 h-10">
@@ -61,7 +71,7 @@ export const CommentsSection: React.FC<CommentsSectionProps> = ({
               ? setCommentError("")
               : setCommentError("Please enter comment.")
           }
-          className="w-full h-10  border-b-2 focus:outline-none"
+          className="w-full h-10  border-b-2 focus:outline-none bg-transparent"
         />
         {commentText.length > 0 && !commentError && (
           <i
@@ -97,9 +107,19 @@ export const CommentsSection: React.FC<CommentsSectionProps> = ({
                       <span className="cursor-default">
                         {timeAgoShort(comment.createdAt)}
                       </span>
-                      <span className="cursor-pointer">
-                        {comment.commentLikes.length > 1
-                          ? comment.commentLikes.length + " likes"
+                      <span
+                        onClick={() =>
+                          likeHandler(comment.id, comment.commentLikes)
+                        }
+                        className={`cursor-pointer hover:text-myTextColor ${
+                          comment.commentLikes.length > 0 &&
+                          "text-blue-400 hover:text-blue-600"
+                        }`}
+                      >
+                        {comment.commentLikes.length > 0
+                          ? comment.commentLikes.length > 1
+                            ? comment.commentLikes.length + " likes"
+                            : comment.commentLikes.length + " like"
                           : "like"}
                       </span>
                       <span
@@ -107,14 +127,14 @@ export const CommentsSection: React.FC<CommentsSectionProps> = ({
                           setActiveIndex(index);
                           setActiveReplyTab(!activeReplyTab);
                         }}
-                        className="cursor-pointer"
+                        className="cursor-pointer hover:text-gray-500"
                       >
                         Reply
                       </span>
                     </div>
                     {comment.replies.length > 0 && (
                       <span
-                        className="cursor-pointer italic text-sm text-gray-400"
+                        className="cursor-pointer italic text-sm text-gray-400 hover:text-gray-500"
                         onClick={() => {
                           setActiveIndex(index);
                           setViewReply(!viewReply);

@@ -36,7 +36,7 @@ export const ReplyComment: React.FC<ReplyCommentProps> = ({ comment }) => {
         value={replyText}
         type="text"
         placeholder="Add reply..."
-        className="border-b-2 focus:outline-none"
+        className="border-b-2 focus:outline-none bg-transparent"
         onChange={(e: any) => setReplyText(e.target.value)}
       />
       {replyText.length > 0 && (

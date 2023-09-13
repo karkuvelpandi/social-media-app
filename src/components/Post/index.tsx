@@ -3,12 +3,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux";
 import { PostInterface } from "../../types/post.types";
 import { timeAgo } from "../../utils/general.util";
-import { deletePost, likePost, unlikePost } from "./post.slice";
+import {
+  deletePost,
+  getPostComments,
+  likePost,
+  unlikePost,
+} from "./post.slice";
 import { Link } from "react-router-dom";
 import { VideoPlayer } from "./components/VideoPlayer";
 import { Button } from "primereact/button";
 import { Modal } from "../../ui/Modal/Modal";
 import { AsyncState } from "../../types";
+import { CommentsSection } from "./components/CommentsSection";
 //
 type PostProps = {
   // All details about the particular post
@@ -21,6 +27,7 @@ export const Post: React.FC<PostProps> = ({ post }) => {
   const [expandContent, setExpandContent] = useState<boolean>(false);
   const [openDropdown, setOpenDropdown] = useState<boolean>(false);
   const [isDelete, setIsDelete] = useState<boolean>(false);
+  const [commentTabActive, setCommentTabActive] = useState<boolean>(false);
   const userProfile = useSelector((state: RootState) => state.user.userProfile);
   const deletePostStatus = useSelector(
     (state: RootState) => state.post.deletePostStatus
@@ -172,7 +179,14 @@ export const Post: React.FC<PostProps> = ({ post }) => {
               {liked ? "Liked" : "Like"}
             </p>
           </button>
-          <span className="flex items-center gap-2 hover:cursor-pointer">
+          <span
+            onClick={() => {
+              !commentTabActive && dispatch(getPostComments(post.id));
+              setCommentTabActive(!commentTabActive);
+            }}
+            className="flex items-center gap-2 hover:cursor-pointer"
+          >
+            {post.commentCount ? post.commentCount : ""}
             <i className="pi pi-comment text-gray-600 font-bold" />
             <p className="font-semibold">Comment</p>
           </span>
@@ -182,6 +196,10 @@ export const Post: React.FC<PostProps> = ({ post }) => {
           <p className="font-semibold">Share</p>
         </span>
       </section>
+      {/* Comment section */}
+      {commentTabActive && (
+        <CommentsSection post={post} comments={post.comments} />
+      )}
     </section>
   );
 };

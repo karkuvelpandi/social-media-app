@@ -49,6 +49,7 @@ export const getAllUsers = async () => {
   return response;
 };
 
+// Updating user profile
 export const updateUserProfile = async (userData: UserProfileInterface) => {
   const docRef = doc(db, "users", userData.id);
   try {

@@ -99,7 +99,6 @@ function* updateUserProfileSaga() {
           firebaseAPI.updateUserProfile(action.payload)
         );
         if (!data) throw new Error();
-        console.log(action.payload);
         yield put({
           type: Actions.updateUserProfile + ActionState.FULFILLED,
           payload: action.payload,
@@ -122,7 +121,6 @@ function* addUserPostSaga() {
         yield put({ type: Actions.addUserPost + ActionState.PENDING });
         const data = yield call(() => firebaseAPI.addUserPost(action.payload));
         if (!data) throw new Error();
-        console.log(action.payload);
         yield put({
           type: Actions.addUserPost + ActionState.FULFILLED,
           payload: action.payload,
@@ -146,7 +144,6 @@ function* followUserSaga() {
         yield put({ type: Actions.followUser + ActionState.PENDING });
         const data = yield call(() => firebaseAPI.followUser(action.payload));
         if (!data) throw new Error();
-        console.log(action.payload);
         yield put({
           type: Actions.followUser + ActionState.FULFILLED,
           payload: action.payload,

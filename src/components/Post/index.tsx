@@ -49,7 +49,6 @@ export const Post: React.FC<PostProps> = ({ post }) => {
 
   // Function to dispatch actions while onClick
   const handleLike = () => {
-    console.log("Triggering");
     if (post.likes.includes(userProfile.id)) {
       dispatch(unlikePost({ postId: post.id, userId: userProfile.id }));
     } else {

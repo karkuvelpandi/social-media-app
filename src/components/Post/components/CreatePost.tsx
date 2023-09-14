@@ -121,14 +121,12 @@ export const CreatePost = () => {
   // Adding the created post to the userProfile
   useEffect(() => {
     if (createPostStatus === AsyncState.FULFILLED) {
-      console.log(currentCreatedPost);
       const data: AddUserPostData = {
         userId: userProfile.id,
         postId: currentCreatedPost.id,
       };
       // Currently we are filter post by author name and getting the post
       // This particular addUserPost is saving the post data on user profile.
-      console.log(data);
       dispatch(addUserPost(data));
       setFormData({
         description: "",
@@ -143,7 +141,6 @@ export const CreatePost = () => {
     }
   }, [createPostStatus, currentCreatedPost.id, dispatch, userProfile.id]);
   //
-  console.log(formData);
   return (
     <section className="mt-3 m-auto bg-myPrimary rounded-md p-3 shadow-myShadowColor shadow-md">
       <span className="text-gray-500 font-semibold">

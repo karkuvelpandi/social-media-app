@@ -16,7 +16,6 @@ export const ReplyComment: React.FC<ReplyCommentProps> = ({ comment }) => {
   const userProfile = useSelector((state: RootState) => state.user.userProfile);
   //
   const replyHandler = () => {
-    console.log(comment);
     const replyData: CommentReplyFormData = {
       commentId: comment.id,
       postId: comment.postId,

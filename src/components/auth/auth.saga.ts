@@ -8,13 +8,13 @@ export const Actions = {
   login: "auth/login ",
   logout: "auth/logout ",
 };
+// Signup and create new user function
 function* signUpAndCreateUserSaga() {
   yield takeEvery(
     Actions.signUp + ActionState.REQUEST,
     function* (action: PayloadAction<RegisterFormData>): any {
       try {
         yield put({ type: Actions.signUp + ActionState.PENDING });
-        console.log("saga function");
         const data = yield call(() =>
           firebaseAPI.signUpAndCreateUserData(action.payload)
         );
@@ -27,7 +27,6 @@ function* signUpAndCreateUserSaga() {
           },
         });
       } catch (error: any) {
-        console.log(error);
         yield put({
           type: Actions.signUp + ActionState.REJECTED,
           payload: error?.message || "Something wrong happened",
@@ -36,7 +35,7 @@ function* signUpAndCreateUserSaga() {
     }
   );
 }
-
+// Login function
 function* loginSaga() {
   yield takeEvery(
     Actions.login + ActionState.REQUEST,
@@ -52,7 +51,6 @@ function* loginSaga() {
             data,
           },
         });
-        console.log(data);
       } catch (error: any) {
         yield put({
           type: Actions.login + ActionState.REJECTED,
@@ -62,6 +60,7 @@ function* loginSaga() {
     }
   );
 }
+// Logout function
 function* logOutSaga() {
   yield takeEvery(
     Actions.logout + ActionState.REQUEST,

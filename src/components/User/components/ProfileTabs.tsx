@@ -3,7 +3,6 @@ import { Link, NavLink } from "react-router-dom";
 
 export const ProfileTabs = () => {
   const navLinkStyles = ({ isActive }: any) => {
-    console.log(isActive);
     return isActive ? { borderBottom: "2px solid blue" } : {};
   };
   const isProfileRoute = window.location.pathname === "/profile";

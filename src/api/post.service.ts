@@ -42,7 +42,6 @@ export const createPost = async (formData: CreatePostData) => {
     .catch((error) => {
       return error;
     });
-  console.log(response);
   return response;
 };
 
@@ -59,13 +58,11 @@ export const getUserPosts = async (userId: string) => {
     .then((snapshot) => {
       let posts: any = [];
       snapshot.docs.forEach((doc) => {
-        console.log(doc);
         posts.push({ ...doc.data(), id: doc.id });
       });
       return posts;
     })
     .catch((error) => {
-      console.log(error);
       return error;
     });
   return response;
@@ -85,7 +82,6 @@ export const getFeedPosts = async () => {
       return posts;
     })
     .catch((error) => {
-      console.log(error);
       return error;
     });
   return response;
@@ -248,7 +244,6 @@ export const getPostComments = async (postId: string) => {
       return { comments, postId };
     })
     .catch((error) => {
-      console.log(error);
       return error;
     });
   return response;

@@ -21,7 +21,6 @@ export const Profile = () => {
   );
   // Capturing id form params
   const { userId } = useParams();
-  console.log(userId);
   useEffect(() => {
     if (userId) {
       dispatch(getUserPosts(userId));

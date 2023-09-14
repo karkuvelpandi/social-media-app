@@ -222,7 +222,6 @@ const postSlice = createSlice({
         });
         state.likePostStatus = AsyncState.FULFILLED;
         state.likePostError = "";
-        console.log(state.userFeedPosts);
       }
     );
     builder.addCase(
@@ -258,8 +257,6 @@ const postSlice = createSlice({
         });
         state.unlikePostStatus = AsyncState.FULFILLED;
         state.unlikePostError = "";
-        console.log(state.userPosts);
-        console.log(state.userFeedPosts);
       }
     );
     builder.addCase(
@@ -465,7 +462,6 @@ const postSlice = createSlice({
                 comment.id === commentId &&
                 !comment.commentLikes.includes(userId)
               ) {
-                console.log("Adding like on slice");
                 comment.commentLikes = [userId, ...comment.commentLikes];
                 return comment;
               }
@@ -481,7 +477,6 @@ const postSlice = createSlice({
                 comment.id === commentId &&
                 !comment.commentLikes.includes(userId)
               ) {
-                console.log("Adding like on slice");
                 comment.commentLikes = [userId, ...comment.commentLikes];
                 return comment;
               }

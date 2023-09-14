@@ -39,11 +39,9 @@ export const getAllUsers = async () => {
         };
         users.push(requiredData);
       });
-      console.log(users);
       return users;
     })
     .catch((error) => {
-      console.log(error);
       return error;
     });
   return response;

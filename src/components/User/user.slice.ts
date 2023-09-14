@@ -129,7 +129,6 @@ export const userSlice = createSlice({
       Actions.getUserProfile + ActionState.FULFILLED,
       (state, action: PayloadAction<UserProfileInterface>) => {
         state.userProfile = action.payload;
-        console.log(action.payload);
         state.getUserProfileStatus = AsyncState.FULFILLED;
         state.getUserProfileError = "";
       }
@@ -226,7 +225,6 @@ export const userSlice = createSlice({
       Actions.addUserPost + ActionState.FULFILLED,
       (state, action: PayloadAction<any>) => {
         state.userProfile.posts = [action.payload, ...state.userProfile.posts];
-        console.log(state.userProfile);
         state.addUserPostStatus = AsyncState.FULFILLED;
         state.addUserPostError = "";
       }

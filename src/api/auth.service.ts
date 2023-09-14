@@ -26,20 +26,16 @@ export const signUpAndCreateUserData = async (formData: RegisterFormData) => {
     localStorage.setItem("authToken", userObject.accessToken);
     localStorage.setItem("partyId", userObject.uid);
   }
-  console.log(localStorage.getItem("partyId"));
-  console.log(localStorage.getItem("authToken"));
   return userObject;
 };
 
 export const loginUser = async (formData: LoginFormData) => {
-  console.log("service start");
   const user: any = await signInWithEmailAndPassword(
     auth,
     formData.email,
     formData.password
   )
     .then((response) => {
-      console.log(response);
       return response.user;
     })
     .catch((error) => {

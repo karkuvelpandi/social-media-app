@@ -35,6 +35,11 @@ export const FollowCard: React.FC<FollowCardProps> = ({ user }) => {
     dispatch(followUser(data));
     setIsActive(true);
   };
+  //
+  useEffect(() => {
+    if (followUserStatus === AsyncState.FULFILLED) setIsActive(false);
+  }, [followUserStatus]);
+  //
   return (
     <div className="flex flex-col gap-2 items-start mb-4">
       <Link

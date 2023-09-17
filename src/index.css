@@ -31,6 +31,17 @@
   height: 100vh;
 }
 
+/*Disable the text inside our website by this viewers can't select and copy text*/
+
+.prevent-select {
+  -webkit-user-select: none;
+  /* Safari */
+  -ms-user-select: none;
+  /* IE 10 and IE 11 */
+  user-select: none;
+  /* Standard syntax */
+}
+
 /* Hiding the scrollbar */
 html {
   overflow: scroll;

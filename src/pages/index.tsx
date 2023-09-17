@@ -2,19 +2,13 @@ import { cloneElement } from "react";
 import { Routes, Route } from "react-router-dom";
 import { HomePage } from "./private/HomePage";
 import { ProfilePage } from "./private/ProfilePage";
-import { Auth } from "../components/auth";
-import { useSelector } from "react-redux";
-import { RootState } from "../redux";
+import { Nomatch } from "../components/Nomatch";
 
 /**
  * Component to separate all routes form App.js to achieve cleaner code and easy to modify in future.
  */
 export const ApplicationRoutes = () => {
   // Access the store
-  const isUserLoggedIn = useSelector(
-    (state: RootState) => state.auth.isUserLoggedIn
-  );
-
   const commonPages = [
     <HomePage path="/" />,
     <ProfilePage path="/profile/:userId/*" />,
@@ -38,6 +32,7 @@ export const ApplicationRoutes = () => {
               />
             );
           })}
+        <Route path="*" element={<Nomatch />} />
       </Routes>
     </>
   );

@@ -150,7 +150,7 @@ export const Post: React.FC<PostProps> = ({ post }) => {
       </section>
       {post.postImages && (
         <section className="w-full mt-2">
-          <img className="w-full rounded-md" src={post.postImages[0]} alt="" />
+          <img className="rounded-md w-full" src={post.postImages[0]} alt="" />
         </section>
       )}
       {post.postVideos.length > 0 && (

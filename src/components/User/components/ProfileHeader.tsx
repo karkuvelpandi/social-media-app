@@ -54,14 +54,14 @@ export const ProfileHeader = () => {
               ? currentSelectedUser.location.city
               : ""}
           </p>
-          <div className="flex gap-1.5 mt-1.5">
+          {/* <div className="flex gap-1.5 mt-1.5">
             <i className="pi pi-twitter cursor-pointer text-[#109cd8]" />
             <i className="pi pi-whatsapp cursor-pointer text-[#10d876]" />
             <i className="pi pi-discord cursor-pointer text-[#383838]" />
             <i className="pi pi-facebook cursor-pointer text-[#105dd8]" />
             <i className="pi pi-linkedin cursor-pointer text-[#1077d8]" />
             <i className="pi pi-reddit cursor-pointer text-[#d81a10]" />
-          </div>
+          </div> */}
         </div>
       </section>
       <p className="font-bold text-lg text-white absolute right-8 bottom-2">

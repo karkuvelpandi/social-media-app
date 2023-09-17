@@ -5,7 +5,7 @@ import { getSelectedUser } from "./user.slice";
 import { getUserPosts } from "../Post/post.slice";
 import { useDispatch, useSelector } from "react-redux";
 import { EditProfile } from "./components/EditProfile";
-import { ProfileTabs } from "./components/ProfileTabs";
+// import { ProfileTabs } from "./components/ProfileTabs";
 import { ProfileAbout } from "./components/ProfileAbout";
 import { ProfilePeople } from "./components/ProfilePeople";
 import { ProfilePhotos } from "./components/ProfilePhotos";

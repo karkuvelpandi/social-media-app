@@ -39,8 +39,8 @@ export const Feeds: React.FC<FeedsProps> = ({ context }) => {
   return (
     <section className="w-full h-full flex justify-between">
       <div
-        className={`flex-1 overflow-y-auto max-w-[700px] md:mx-auto  pb-10 ${
-          context === "profile" ? "" : "mx-5"
+        className={`flex-1 max-w-[700px] md:mx-auto  pb-10 ${
+          context === "profile" ? "" : "overflow-y-auto"
         }`}
       >
         <CreatePost />

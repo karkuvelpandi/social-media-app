@@ -29,7 +29,7 @@ export const Profile = () => {
   }, [dispatch, userId]);
 
   return (
-    <div className="flex-1 mx-[20px] overflow-y-auto pb-10 ">
+    <div className="flex-1 mx-[20px] max-w-[1000px] overflow-y-auto pb-10 ">
       <ProfileHeader />
       {/* <ProfileTabs /> */}
       <Routes>

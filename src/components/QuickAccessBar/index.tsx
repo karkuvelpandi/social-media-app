@@ -24,7 +24,7 @@ export const QuickAccessBar: React.FC<QuickAccessBarProps> = ({ context }) => {
   const getAllUsersStatus = useSelector(
     (state: RootState) => state.user.getAllUsersStatus
   );
-  console.log(suggestedUsers);
+
   return (
     <section className={`hidden md:block md:w-56 overflow-y-auto`}>
       <div

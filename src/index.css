@@ -72,6 +72,48 @@ html {
   scrollbar-width: none;
 }
 
+/* Custom scrollbar */
+/* The emerging W3C standard
+   that is currently Firefox-only */
+.show-custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.5) transparent;
+}
+
+.show-custom-scrollbar.custom-scrollbar-invert {
+  scrollbar-color: rgba(0, 0, 0, 0.3) rgba(0, 0, 0, 0.067);
+}
+
+/* Works on Chrome/Edge/Safari */
+.show-custom-scrollbar::-webkit-scrollbar {
+  display: block;
+  width: 5px;
+}
+
+.show-custom-scrollbar::-webkit-scrollbar-track {
+  display: block;
+  background: transparent;
+}
+
+.show-custom-scrollbar.custom-scrollbar-invert.custom-scrollbar-track-light::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.067);
+}
+
+.show-custom-scrollbar::-webkit-scrollbar-thumb {
+  display: block;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+}
+
+.show-custom-scrollbar.custom-scrollbar-invert::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.show-custom-scrollbar.custom-scrollbar-thin::-webkit-scrollbar-thumb {
+  width: 2px;
+  height: 2px;
+}
+
 /* Loader animation */
 .loader-bg {
   background: linear-gradient(90deg, #e8e8e8 10%, #f1f1f1 20%, #e7e6e6 35%);

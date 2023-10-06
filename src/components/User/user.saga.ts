@@ -15,6 +15,7 @@ export const Actions = {
   updateUserProfile: "user/update-user-profile ",
   addUserPost: "user/add-user-post ",
   followUser: "user/follow-user ",
+  unFollowUser: "user/unfollow-user ",
 };
 
 // Get User profile
@@ -157,7 +158,28 @@ function* followUserSaga() {
     }
   );
 }
-
+// Un Follow another person's profile
+function* unFollowUserSaga() {
+  yield takeEvery(
+    Actions.unFollowUser + ActionState.REQUEST,
+    function* (action: PayloadAction<FollowData>): any {
+      try {
+        yield put({ type: Actions.unFollowUser + ActionState.PENDING });
+        const data = yield call(() => firebaseAPI.unFollowUser(action.payload));
+        if (!data) throw new Error();
+        yield put({
+          type: Actions.unFollowUser + ActionState.FULFILLED,
+          payload: action.payload,
+        });
+      } catch (error: any) {
+        yield put({
+          type: Actions.unFollowUser + ActionState.REJECTED,
+          payload: error?.message || "Something wrong happened",
+        });
+      }
+    }
+  );
+}
 export const userSagas = [
   getUserProfileSaga(),
   getAllUsersSaga(),
@@ -165,4 +187,5 @@ export const userSagas = [
   addUserPostSaga(),
   getSelectedUserSaga(),
   followUserSaga(),
+  unFollowUserSaga(),
 ];

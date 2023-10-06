@@ -12,8 +12,8 @@ export const ProfilePage: React.FC<ProfilePageProps> = () => {
   return (
     <main className="bg-mySecondary">
       <ApplicationHeader />
-      <SideBar />
-      <div className="xxs:left-0 sm:left-52 top-[56px] -z-0 bg-mySecondary text-myTextColor fixed w-auto right-0 bottom-0  flex justify-center">
+      {/* <SideBar /> */}
+      <div className="xxs:left-0 top-[56px] -z-0 bg-mySecondary text-myTextColor fixed w-auto right-0 bottom-0  flex justify-center">
         <Profile />
       </div>
     </main>

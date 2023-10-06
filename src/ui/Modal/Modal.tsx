@@ -28,19 +28,18 @@ export const Modal = (props: PropsWithChildren<ModalProps>) => {
         </div>
       )}
       {props.allCentered ? (
-        <div className="h-screen w-screen flex justify-center items-center relative z-10">
-          {props.children}
+        <div className=" flex justify-center items-center h-screen">
+          <div
+            onClick={props.onBackdropClick}
+            className={`fixed inset-0 z-0 ${
+              props.withShade && "bg-black opacity-75"
+            }`}
+          />
+          <div className="relative z-10">{props.children}</div>
         </div>
       ) : (
         <div className="relative z-10">{props.children}</div>
       )}
-
-      <div
-        onClick={props.onBackdropClick}
-        className={`fixed inset-0 z-0 ${
-          props.withShade && "bg-black opacity-75"
-        }`}
-      />
     </div>,
     document.getElementById(props.modalRoot ?? "modal") as any
   );

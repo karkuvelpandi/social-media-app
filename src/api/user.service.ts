@@ -3,6 +3,7 @@ import {
   getDoc,
   updateDoc,
   arrayUnion,
+  arrayRemove,
   doc,
   getDocs,
   collection,
@@ -84,7 +85,25 @@ export const followUser = async (data: FollowData) => {
     await updateDoc(profileToFollowRef, {
       followers: arrayUnion(followerData),
     });
-    console.log("Document successfully updated");
+    console.log("Followed successfully");
+    return data; // Indicate success
+  } catch (error) {
+    console.error("Error updating document:", error);
+    return false; // Indicate failure
+  }
+};
+
+// Un Follow another user profile
+export const unFollowUser = async (data: FollowData) => {
+  const { followerData, profileToFollow } = data;
+  const followerRef = doc(db, "users", followerData.userId);
+  const profileToFollowRef = doc(db, "users", profileToFollow.userId);
+  try {
+    await updateDoc(followerRef, { following: arrayRemove(profileToFollow) });
+    await updateDoc(profileToFollowRef, {
+      followers: arrayRemove(followerData),
+    });
+    console.log("Unfollowed successfully");
     return data; // Indicate success
   } catch (error) {
     console.error("Error updating document:", error);

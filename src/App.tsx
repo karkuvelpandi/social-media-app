@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { RootState } from "./redux";
 import { AsyncState } from "./types";
 import { Auth } from "./components/auth";
@@ -13,10 +14,11 @@ import { getAllUsers, getUserProfile } from "./components/User/user.slice";
 
 // Main component
 const App = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [windowWidth] = useWindowSize();
   // States
   const [showBadge, setShowBadge] = useState<boolean>(false);
-  const dispatch = useDispatch();
-  const [windowWidth] = useWindowSize();
   // Access the store
   const isMobileView = useSelector(
     (state: RootState) => state.visibility.isMobileView
@@ -29,6 +31,9 @@ const App = () => {
     (state: RootState) => state.auth.signUpStatus
   );
   const loginStatus = useSelector((state: RootState) => state.auth.loginStatus);
+  const logoutStatus = useSelector(
+    (state: RootState) => state.auth.logoutStatus
+  );
   const darkMode = useSelector((state: RootState) => state.visibility.darkMode);
 
   // Updating Network availability while loading the app
@@ -81,6 +86,16 @@ const App = () => {
     }
   }, [dispatch, isMobileView, windowWidth]);
 
+  // Navigate to homepage after login or sign up
+  useEffect(() => {
+    if (
+      loginStatus === AsyncState.FULFILLED ||
+      signUpStatus === AsyncState.FULFILLED ||
+      logoutStatus === AsyncState.FULFILLED
+    )
+      navigate("/");
+  }, [signUpStatus, loginStatus, logoutStatus]);
+
   return (
     <main className={darkMode ? "dark-theme" : ""}>
       <div
@@ -92,7 +107,7 @@ const App = () => {
       >
         {isOffline ? "Offline" : "Online"}
       </div>
-      <div className={``}>
+      <div className={`prevent-select`}>
         {isUserLoggedIn ? (
           <>
             <ApplicationRoutes />

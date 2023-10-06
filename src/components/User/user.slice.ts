@@ -27,6 +27,9 @@ export const addUserPost = createAction<AddUserPostData>(
 export const followUser = createAction<FollowData>(
   Actions.followUser + ActionState.REQUEST
 );
+export const unFollowUser = createAction<FollowData>(
+  Actions.unFollowUser + ActionState.REQUEST
+);
 
 // State interface
 interface UserInitialState {
@@ -47,6 +50,8 @@ interface UserInitialState {
   getSelectedUserError: string;
   followUserStatus: string;
   followUserError: string;
+  unFollowUserStatus: string;
+  unFollowUserError: string;
 }
 
 // State
@@ -104,6 +109,8 @@ const initialState: UserInitialState = {
   getSelectedUserError: "",
   followUserStatus: AsyncState.IDLE,
   followUserError: "",
+  unFollowUserStatus: AsyncState.IDLE,
+  unFollowUserError: "",
 };
 
 export const userSlice = createSlice({
@@ -236,7 +243,7 @@ export const userSlice = createSlice({
         state.addUserPostError = action.payload;
       }
     );
-    // Follow Another users
+    // Follow other users
     builder.addCase(Actions.followUser + ActionState.PENDING, (state) => {
       state.followUserStatus = AsyncState.PENDING;
       state.followUserError = "";
@@ -261,6 +268,29 @@ export const userSlice = createSlice({
       (state, action: PayloadAction<string>) => {
         state.followUserStatus = AsyncState.REJECTED;
         state.followUserError = action.payload;
+      }
+    );
+    // Un Follow other users
+    builder.addCase(Actions.unFollowUser + ActionState.PENDING, (state) => {
+      state.unFollowUserStatus = AsyncState.PENDING;
+      state.unFollowUserError = "";
+    });
+    builder.addCase(
+      Actions.unFollowUser + ActionState.FULFILLED,
+      (state, action: PayloadAction<FollowData>) => {
+        const { profileToFollow } = action.payload;
+        state.userProfile.following = state.userProfile.following.filter(
+          (user) => user.userId !== profileToFollow.userId
+        );
+        state.unFollowUserStatus = AsyncState.FULFILLED;
+        state.unFollowUserError = "";
+      }
+    );
+    builder.addCase(
+      Actions.unFollowUser + ActionState.REJECTED,
+      (state, action: PayloadAction<string>) => {
+        state.unFollowUserStatus = AsyncState.REJECTED;
+        state.unFollowUserError = action.payload;
       }
     );
   },

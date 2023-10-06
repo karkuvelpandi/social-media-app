@@ -5,6 +5,7 @@ import { AsyncState } from "../../types";
 import { useSelector } from "react-redux";
 import { QuickAccessBar } from "../QuickAccessBar";
 import { CreatePost } from "../Post/components/CreatePost";
+import { PostLoader } from "../../ui/PostLoader";
 // Props type
 type FeedsProps = {
   /* Here context decide what to render according 
@@ -27,10 +28,10 @@ export const Feeds: React.FC<FeedsProps> = ({ context }) => {
   );
   //  Prepare posts according to the place of render
   const posts = context === "profile" ? userPosts : userFeedPosts;
-  // const isLoading =
-  //   context === "profile"
-  //     ? getUserPostsStatus === AsyncState.PENDING
-  //     : getFeedPostsStatus === AsyncState.PENDING;
+  const isLoading =
+    context === "profile"
+      ? getUserPostsStatus === AsyncState.PENDING
+      : getFeedPostsStatus === AsyncState.PENDING;
   const isPostsAvailable =
     context === "profile"
       ? getUserPostsStatus === AsyncState.FULFILLED
@@ -39,8 +40,8 @@ export const Feeds: React.FC<FeedsProps> = ({ context }) => {
   return (
     <section className="w-full h-full flex justify-between">
       <div
-        className={`flex-1 overflow-y-auto max-w-[700px] md:mx-auto  pb-10 ${
-          context === "profile" ? "" : "mx-5"
+        className={`flex-1 max-w-[700px] md:mx-auto  pb-10 ${
+          context === "profile" ? "" : "overflow-y-auto"
         }`}
       >
         <CreatePost />
@@ -53,6 +54,8 @@ export const Feeds: React.FC<FeedsProps> = ({ context }) => {
               </div>
             );
           })}
+        {isLoading && <PostLoader />}
+        {isLoading && <PostLoader />}
       </div>
       <QuickAccessBar context={context === "profile" ? "profile" : ""} />
     </section>

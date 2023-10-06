@@ -31,6 +31,17 @@
   height: 100vh;
 }
 
+/*Disable the text inside our website by this viewers can't select and copy text*/
+
+.prevent-select {
+  -webkit-user-select: none;
+  /* Safari */
+  -ms-user-select: none;
+  /* IE 10 and IE 11 */
+  user-select: none;
+  /* Standard syntax */
+}
+
 /* Hiding the scrollbar */
 html {
   overflow: scroll;
@@ -59,6 +70,48 @@ html {
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Custom scrollbar */
+/* The emerging W3C standard
+   that is currently Firefox-only */
+.show-custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.5) transparent;
+}
+
+.show-custom-scrollbar.custom-scrollbar-invert {
+  scrollbar-color: rgba(0, 0, 0, 0.3) rgba(0, 0, 0, 0.067);
+}
+
+/* Works on Chrome/Edge/Safari */
+.show-custom-scrollbar::-webkit-scrollbar {
+  display: block;
+  width: 5px;
+}
+
+.show-custom-scrollbar::-webkit-scrollbar-track {
+  display: block;
+  background: transparent;
+}
+
+.show-custom-scrollbar.custom-scrollbar-invert.custom-scrollbar-track-light::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.067);
+}
+
+.show-custom-scrollbar::-webkit-scrollbar-thumb {
+  display: block;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+}
+
+.show-custom-scrollbar.custom-scrollbar-invert::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.show-custom-scrollbar.custom-scrollbar-thin::-webkit-scrollbar-thumb {
+  width: 2px;
+  height: 2px;
 }
 
 /* Loader animation */

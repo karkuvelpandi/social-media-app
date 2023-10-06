@@ -24,9 +24,9 @@ export const QuickAccessBar: React.FC<QuickAccessBarProps> = ({ context }) => {
   const getAllUsersStatus = useSelector(
     (state: RootState) => state.user.getAllUsersStatus
   );
-  console.log(suggestedUsers);
+
   return (
-    <section className="hidden md:block md:w-56 overflow-y-auto">
+    <section className={`hidden md:block md:w-56 overflow-y-auto`}>
       <div
         className={`w-[90%] bg-myPrimary mt-3 p-3 space-y-2.5 rounded-md shadow-myShadowColor shadow-md ${
           context === "profile" ? "ml-auto" : "m-auto"

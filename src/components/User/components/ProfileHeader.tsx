@@ -22,6 +22,8 @@ export const ProfileHeader = () => {
   const isMobileView = useSelector(
     (state: RootState) => state.visibility.isMobileView
   );
+  const userPosts = useSelector((state: RootState) => state.post.userPosts);
+
   const isUserHasEditAccess = userProfile.id === currentSelectedUser.id;
   // User data for follow button
   const user: AuthorInfo = {
@@ -77,7 +79,7 @@ export const ProfileHeader = () => {
             )}
           </section>
           <section className="flex justify-start gap-2 sm:gap-4 text-gray-600 font-semibold">
-            <div>{currentSelectedUser.posts.length}&nbsp;Posts</div>
+            <div>{userPosts.length}&nbsp;Posts</div>
             <div className="cursor-pointer" onClick={() => setOpenList(true)}>
               {currentSelectedUser.followers.length}&nbsp;Followers
             </div>

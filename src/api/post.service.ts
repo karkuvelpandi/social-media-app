@@ -2,11 +2,8 @@ import {
   doc,
   query,
   where,
-  endAt,
   addDoc,
   getDoc,
-  orderBy,
-  startAt,
   getDocs,
   updateDoc,
   deleteDoc,
@@ -18,7 +15,6 @@ import { db } from "../firebaseConfig";
 import { newComment, newCommentReply, newPost } from "../utils/psot.util";
 import {
   CommentFormData,
-  CommentInterface,
   CommentReply,
   CommentReplyFormData,
   CreatePostData,
